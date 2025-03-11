@@ -7,6 +7,11 @@ namespace Message.Db.Services
     {
         private readonly DatabaseContext _dbContext;
 
+        public MessageRepository(DatabaseContext context)
+        {
+            _dbContext = context;
+        }
+
         public async Task<IEnumerable<Models.Message>> GetAll()
         {
             return await _dbContext.Messages.ToListAsync();

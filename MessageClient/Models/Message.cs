@@ -1,4 +1,4 @@
-﻿namespace Message.Db.Models
+﻿namespace MessageClient.Models
 {
     public class Message
     {

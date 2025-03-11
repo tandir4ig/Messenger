@@ -1,0 +1,14 @@
+﻿@page "/chat"
+@using MessageClient.Models
+@inject HttpClient Http
+
+<h3>Chat</h3>
+
+<MudTextField @bind-Value="newMessage" Label="Enter your message" Variant="Variant.Filled" />
+
+@code {
+    private string newMessage;
+    private List<Message> messages = new();
+
+
+}
