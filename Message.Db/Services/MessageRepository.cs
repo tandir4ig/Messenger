@@ -1,0 +1,22 @@
+﻿using Message.Db.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace Message.Db.Services
+{
+    public class MessageRepository : IMessageRepository
+    {
+        private readonly DatabaseContext _dbContext;
+
+        public async Task<IEnumerable<Models.Message>> GetAll()
+        {
+            return await _dbContext.Messages.ToListAsync();
+        }
+
+        public async Task Add(Models.Message message)
+        {
+            await _dbContext.Messages.AddAsync(message);
+            await _dbContext.SaveChangesAsync();
+            
+        }
+    }
+}
