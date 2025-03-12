@@ -5,11 +5,11 @@ namespace ApiMessage.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MessageController : Controller
+    public class MessagesController : Controller
     {
         private readonly IMessageRepository _messageRepository;
 
-        public MessageController(IMessageRepository messageRepository)
+        public MessagesController(IMessageRepository messageRepository)
         {
             _messageRepository = messageRepository;
         }
@@ -23,15 +23,16 @@ namespace ApiMessage.Controllers
                 Timestamp = DateTime.UtcNow,
             };
 
-            await _messageRepository.Add(message);
+            await _messageRepository.AddAsync(message);
 
             return CreatedAtAction(nameof(Get), new { id = message.Id }, message);
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Message.Db.Models.Message>> Get()
+        public async Task<ActionResult<IEnumerable<Message.Db.Models.Message>>> Get()
         {
-            return await _messageRepository.GetAll();
+            var messages = await _messageRepository.GetAllAsync();
+            return Ok(messages);
         }
     }
 }

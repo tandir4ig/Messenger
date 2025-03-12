@@ -12,12 +12,12 @@ namespace Message.Db.Services
             _dbContext = context;
         }
 
-        public async Task<IEnumerable<Models.Message>> GetAll()
+        public async Task<IEnumerable<Models.Message>> GetAllAsync()
         {
             return await _dbContext.Messages.ToListAsync();
         }
 
-        public async Task Add(Models.Message message)
+        public async Task AddAsync(Models.Message message)
         {
             await _dbContext.Messages.AddAsync(message);
             await _dbContext.SaveChangesAsync();

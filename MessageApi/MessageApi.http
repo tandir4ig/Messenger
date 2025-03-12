@@ -1,6 +1,0 @@
-@MessageApi_HostAddress = 
-
-GET {{MessageApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

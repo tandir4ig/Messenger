@@ -10,6 +10,17 @@ namespace MessageApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowBlazorClient",
+                    builder =>
+                    {
+                        builder.WithOrigins("https://localhost:7218") // Укажите URL вашего Blazor WebAssembly приложения
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
 
             // Add services to the container.
             builder.Services.AddTransient<IMessageRepository, MessageRepository>();
@@ -36,6 +47,8 @@ namespace MessageApi
                 var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
                 db.Database.Migrate();
             }
+
+            app.UseCors("AllowBlazorClient");
 
             app.UseAuthorization();
 

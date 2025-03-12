@@ -1,14 +1,39 @@
-﻿@page "/chat"
+﻿@page "/"
 @using MessageClient.Models
 @inject HttpClient Http
 
-<h3>Chat</h3>
-
 <MudTextField @bind-Value="newMessage" Label="Enter your message" Variant="Variant.Filled" />
+<MudButton OnClick="SendMessage" Color="Color.Primary">Send</MudButton>
+
+<MudList T="string">
+    @foreach (var message in messages)
+    {
+        <MudListItem>
+            <MudText Typo="Typo.body1">@message.Content</MudText>
+            <MudText Typo="Typo.caption">@message.Timestamp.ToLocalTime()</MudText>
+        </MudListItem>
+    }
+</MudList>
 
 @code {
     private string newMessage;
     private List<Message> messages = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
+    }
 
+    private async Task SendMessage()
+    {
+        if (!string.IsNullOrWhiteSpace(newMessage))
+        {
+            var response = await Http.PostAsJsonAsync("api/Messages", newMessage);
+            if (response.IsSuccessStatusCode)
+            {
+                newMessage = string.Empty;
+                messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
+            }
+        }
+    }
 }

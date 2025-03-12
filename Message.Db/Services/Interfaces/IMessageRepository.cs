@@ -2,7 +2,7 @@
 {
     public interface IMessageRepository
     {
-        Task<IEnumerable<Models.Message>> GetAll();
-        Task Add (Models.Message message);
+        Task<IEnumerable<Models.Message>> GetAllAsync();
+        Task AddAsync (Models.Message message);
     }
 }
