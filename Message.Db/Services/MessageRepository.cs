@@ -23,5 +23,16 @@ namespace Message.Db.Services
             await _dbContext.SaveChangesAsync();
             
         }
+
+        public async Task UpdateMessageAsync(Models.Message message)
+        {
+            _dbContext.Messages.Update(message);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<Models.Message> GetMessageByid(Guid id)
+        {
+            return await _dbContext.Messages.FirstOrDefaultAsync(x  => x.Id == id);
+        }
     }
 }

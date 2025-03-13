@@ -4,8 +4,8 @@ namespace Message.Db
 {
     public class DatabaseContext : DbContext
     {
-        public DbSet<Models.Message> Messages { get; set; }
-
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+
+        public DbSet<Models.Message> Messages { get; set; }  
     }
 }
