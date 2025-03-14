@@ -1,6 +1,6 @@
-using Message.Db;
-using Message.Db.Services;
-using Message.Db.Services.Interfaces;
+using Tandia.Messages;
+using Tandia.Messages.Services;
+using Tandia.Messages.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace MessageApi

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Message.Db\Message.Db.csproj" />
+    <ProjectReference Include="..\Tandia.Messages\Tandia.Messages.csproj" />
   </ItemGroup>
 
 </Project>

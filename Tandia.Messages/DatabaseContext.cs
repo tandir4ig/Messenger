@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Tandia.Messages.Models;
 
-namespace Message.Db
+namespace Tandia.Messages
 {
     public class DatabaseContext : DbContext
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
-        public DbSet<Models.Message> Messages { get; set; }  
+        public DbSet<Message> Messages { get; set; }  
     }
 }

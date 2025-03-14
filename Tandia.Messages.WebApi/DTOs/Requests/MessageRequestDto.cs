@@ -1,4 +1,4 @@
-﻿namespace ApiMessage.DTOs.Requests
+﻿namespace Tandia.Messages.WebApi.DTOs.Requests
 {
     public class MessageRequestDto
     {

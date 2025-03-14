@@ -1,4 +1,4 @@
-﻿namespace Message.Db.Models
+﻿namespace Tandia.Messages.Models
 {
     public class Message
     {
