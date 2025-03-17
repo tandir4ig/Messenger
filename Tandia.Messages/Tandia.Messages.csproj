@@ -23,4 +23,11 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Meziantou.Analyzer" Version="2.0.188" />
+    <PackageReference Update="Roslynator.Analyzers" Version="4.13.1" />
+    <PackageReference Update="Roslynator.Formatting.Analyzers" Version="4.13.1" />
+    <PackageReference Update="SonarAnalyzer.CSharp" Version="10.7.0.110445" />
+  </ItemGroup>
+
 </Project>

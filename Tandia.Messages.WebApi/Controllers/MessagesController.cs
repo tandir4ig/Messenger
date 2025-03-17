@@ -1,12 +1,12 @@
 ﻿using Tandia.Messages.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Tandia.Messages.Models;
+using Tandia.Messages.Data.Entities;
 using Tandia.Messages.WebApi.DTOs.Requests;
 
 namespace Tandia.Messages.WebApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/Messages")]
 public class MessagesController : Controller
 {
     private readonly IMessageRepository _messageRepository;

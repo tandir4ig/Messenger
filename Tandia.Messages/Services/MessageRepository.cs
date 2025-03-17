@@ -1,8 +1,9 @@
-﻿using Tandia.Messages.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Tandia.Messages.Models;
+﻿namespace Tandia.Messages.Services;
 
-namespace Tandia.Messages.Services;
+using Microsoft.EntityFrameworkCore;
+using Tandia.Messages.Data;
+using Tandia.Messages.Data.Entities;
+using Tandia.Messages.Services.Interfaces;
 
 public class MessageRepository : IMessageRepository
 {
@@ -10,29 +11,28 @@ public class MessageRepository : IMessageRepository
 
     public MessageRepository(DatabaseContext context)
     {
-        _dbContext = context;
+        this._dbContext = context;
     }
 
-    public async Task<IEnumerable<Message>> GetAllAsync()
+    public async Task<IEnumerable<Message?>> GetAllAsync()
     {
-        return await _dbContext.Messages.ToListAsync();
+        return await this._dbContext.Messages.ToListAsync();
     }
 
     public async Task AddAsync(Message message)
     {
-        await _dbContext.Messages.AddAsync(message);
-        await _dbContext.SaveChangesAsync();
-        
+        await this._dbContext.Messages.AddAsync(message);
+        await this._dbContext.SaveChangesAsync();
     }
 
     public async Task UpdateMessageAsync(Message message)
     {
-        _dbContext.Messages.Update(message);
-        await _dbContext.SaveChangesAsync();
+        this._dbContext.Messages.Update(message);
+        await this._dbContext.SaveChangesAsync();
     }
 
-    public async Task<Message> GetMessageByid(Guid id)
+    public async Task<Message?> GetMessageByid(Guid id)
     {
-        return await _dbContext.Messages.FirstOrDefaultAsync(x  => x.Id == id);
+        return await this._dbContext.Messages.FirstOrDefaultAsync(x => x.Id == id);
     }
 }

@@ -1,7 +1,6 @@
-using Tandia.Messages;
-using Tandia.Messages.Services;
-using Tandia.Messages.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Tandia.Messages.Data;
+using Tandia.Messages.Extensions;
 
 namespace MessageApi
 {
@@ -10,7 +9,7 @@ namespace MessageApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowBlazorClient",
@@ -23,10 +22,7 @@ namespace MessageApi
             });
 
             // Add services to the container.
-            builder.Services.AddTransient<IMessageRepository, MessageRepository>();
-
-            builder.Services.AddDbContext<DatabaseContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddBusinessLogicServices(builder.Configuration.GetConnectionString("DefaultConnection"));
 
             builder.Services.AddControllers();
             builder.Services.AddSwaggerGen();

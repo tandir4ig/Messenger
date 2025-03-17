@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{D8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{33705011-EAFC-41AD-97EE-3812FB4178C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandia.Messages.WebApi", "Tandia.Messages.WebApi\Tandia.Messages.WebApi.csproj", "{5FF11BA1-F871-4D52-8375-C330B15AE609}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tandia.Messages.WebApi", "Tandia.Messages.WebApi\Tandia.Messages.WebApi.csproj", "{5FF11BA1-F871-4D52-8375-C330B15AE609}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageClient", "MessageClient\MessageClient.csproj", "{5A321403-3565-43A1-ABC1-BD3DD7095D97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageClient", "MessageClient\MessageClient.csproj", "{5A321403-3565-43A1-ABC1-BD3DD7095D97}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{6EF2A63D-E9E5-443A-BEEB-21AB8C26547F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandia.Messages", "Tandia.Messages\Tandia.Messages.csproj", "{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tandia.Messages", "Tandia.Messages\Tandia.Messages.csproj", "{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,5 +42,8 @@ Global
 		{5A321403-3565-43A1-ABC1-BD3DD7095D97} = {33705011-EAFC-41AD-97EE-3812FB4178C9}
 		{6EF2A63D-E9E5-443A-BEEB-21AB8C26547F} = {D8E730BB-8C13-4AF5-9EBF-8A33C151D9E0}
 		{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723} = {6EF2A63D-E9E5-443A-BEEB-21AB8C26547F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E25415A5-C165-4DAD-A8A4-BCBC0872726F}
 	EndGlobalSection
 EndGlobal
