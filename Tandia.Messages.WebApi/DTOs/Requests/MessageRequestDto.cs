@@ -1,12 +1,6 @@
-﻿namespace Tandia.Messages.WebApi.DTOs.Requests
-{
-    public record MessageRequestDto
-    {
-        public string Content { get; set; }
+namespace Tandia.Messages.WebApi.DTOs.Requests;
 
-        public MessageRequestDto(string content)
-        {
-            Content = content;
-        }
-    }
+public record MessageRequestDto
+{
+    required public string Content { get; set; }
 }

@@ -15,6 +15,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{6E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tandia.Messages", "Tandia.Messages\Tandia.Messages.csproj", "{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8DDE89DE-584D-454D-B1E6-7F3F75006101}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A612634C-F297-49F7-A40C-521FA825AE87}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +46,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{D8E730BB-8C13-4AF5-9EBF-8A33C151D9E0} = {8DDE89DE-584D-454D-B1E6-7F3F75006101}
+		{33705011-EAFC-41AD-97EE-3812FB4178C9} = {8DDE89DE-584D-454D-B1E6-7F3F75006101}
 		{5FF11BA1-F871-4D52-8375-C330B15AE609} = {6EF2A63D-E9E5-443A-BEEB-21AB8C26547F}
 		{5A321403-3565-43A1-ABC1-BD3DD7095D97} = {33705011-EAFC-41AD-97EE-3812FB4178C9}
 		{6EF2A63D-E9E5-443A-BEEB-21AB8C26547F} = {D8E730BB-8C13-4AF5-9EBF-8A33C151D9E0}

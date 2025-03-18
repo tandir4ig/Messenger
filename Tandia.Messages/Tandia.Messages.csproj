@@ -1,11 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
@@ -22,12 +15,4 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Meziantou.Analyzer" Version="2.0.188" />
-    <PackageReference Update="Roslynator.Analyzers" Version="4.13.1" />
-    <PackageReference Update="Roslynator.Formatting.Analyzers" Version="4.13.1" />
-    <PackageReference Update="SonarAnalyzer.CSharp" Version="10.7.0.110445" />
-  </ItemGroup>
-
 </Project>

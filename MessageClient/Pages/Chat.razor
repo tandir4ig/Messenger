@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using MessageClient.Models
 @inject HttpClient Http
 
@@ -28,7 +28,7 @@
     {
         if (!string.IsNullOrWhiteSpace(newMessage))
         {
-            var response = await Http.PostAsJsonAsync("api/Messages", newMessage);
+            var response = await Http.PutAsJsonAsync("api/Messages/{id}", newMessage);
             if (response.IsSuccessStatusCode)
             {
                 newMessage = string.Empty;

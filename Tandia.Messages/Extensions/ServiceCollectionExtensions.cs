@@ -1,4 +1,4 @@
-﻿namespace Tandia.Messages.Extensions;
+namespace Tandia.Messages.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +13,8 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<DatabaseContext>(options =>
                 options.UseNpgsql(connectionString));
 
-        services.AddTransient<IMessageRepository, MessageRepository>();
+        services.AddSingleton(TimeProvider.System);
+        services.AddTransient<IMessageService, MessageService>();
 
         return services;
     }
