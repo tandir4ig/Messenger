@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Tandia.Messages.Data;
+using Tandia.Messages.Infrastructure.Data;
 
 #nullable disable
 
-namespace Tandia.Messages.Migrations
+namespace Tandia.Messages.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250318124940_Init2")]
-    partial class Init2
+    [Migration("20250319121150_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Tandia.Messages.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Tandia.Messages.Data.Entities.Message", b =>
+            modelBuilder.Entity("Tandia.Messages.Infrastructure.Data.Entities.MessageEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

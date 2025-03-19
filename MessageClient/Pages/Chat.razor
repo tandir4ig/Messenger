@@ -10,12 +10,20 @@
     {
         <MudListItem>
             <MudText Typo="Typo.body1">@message.Content</MudText>
-            <MudText Typo="Typo.caption">@message.Timestamp.ToLocalTime()</MudText>
+            <MudText Typo="Typo.caption">@message.Timestamp.ToLocalTime().ToString("T")</MudText>
+
+            <!-- Поле для изменения сообщения -->
+            <MudTextField @bind-Value="message.Content" Label="Изменить сообщение" />
+
+            <!-- Кнопка для отправки обновленного сообщения на API -->
+            <MudButton Color="Color.Primary" OnClick="@(() => UpdateMessage(message))">
+                Обновить сообщение
+            </MudButton>
         </MudListItem>
     }
-</MudList>
+    </MudList>
 
-@code {
+    @code {
     private string newMessage;
     private List<Message> messages = new();
 
@@ -35,5 +43,14 @@
                 messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
             }
         }
+    }
+
+    private async Task UpdateMessage(Message message)
+    {
+        // Здесь вы можете реализовать логику отправки обновленного сообщения на API
+        using var httpClient = new HttpClient();
+        var response = await httpClient.PutAsJsonAsync($"api/Messages/{message.Id}", message);
+
+        
     }
 }

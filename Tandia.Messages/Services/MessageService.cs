@@ -1,9 +1,10 @@
-namespace Tandia.Messages.Services;
+namespace Tandia.Messages.Application.Services;
 
 using Microsoft.EntityFrameworkCore;
-using Tandia.Messages.Data;
-using Tandia.Messages.Data.Entities;
-using Tandia.Messages.Services.Interfaces;
+using Tandia.Messages.Application.Models;
+using Tandia.Messages.Application.Services.Interfaces;
+using Tandia.Messages.Infrastructure.Data;
+using Tandia.Messages.Infrastructure.Data.Entities;
 
 public class MessageService : IMessageService
 {
@@ -18,7 +19,24 @@ public class MessageService : IMessageService
 
     public async Task<IEnumerable<Message?>> GetAllAsync()
     {
-        return await this._dbContext.Messages.ToListAsync();
+        var messageEntities = await this._dbContext.Messages.ToListAsync();
+
+        var messages = new List<Message?>();
+
+        foreach (var entity in messageEntities)
+        {
+            var message = new Message
+            {
+                Id = entity.Id,
+                Content = entity.Content,
+                LastModified = entity.LastModified,
+                Timestamp = entity.Timestamp,
+            };
+
+            messages.Add(message);
+        }
+
+        return messages;
     }
 
     public async Task<Message> SendMessageAsync(Guid id, Message message)
@@ -27,7 +45,7 @@ public class MessageService : IMessageService
 
         if (_message is null)
         {
-            _message = new Message
+            _message = new MessageEntity
             {
                 Content = message.Content,
                 Timestamp = _timeProvider.GetUtcNow(),
@@ -37,7 +55,13 @@ public class MessageService : IMessageService
             await this._dbContext.Messages.AddAsync(_message);
             await this._dbContext.SaveChangesAsync();
 
-            return _message;
+            return new Message
+            {
+                Id = _message.Id,
+                Content = _message.Content,
+                Timestamp = _message.Timestamp,
+                LastModified = _message.LastModified,
+            };
         }
 
         _message.Content = message.Content;
@@ -46,17 +70,41 @@ public class MessageService : IMessageService
         this._dbContext.Messages.Update(_message);
         await this._dbContext.SaveChangesAsync();
 
-        return _message;
+        return new Message
+        {
+            Id = _message.Id,
+            Content = _message.Content,
+            Timestamp = _message.Timestamp,
+            LastModified = _message.LastModified,
+        };
     }
 
-    public async Task UpdateMessageAsync(Message message)
-    {
-        this._dbContext.Messages.Update(message);
-        await this._dbContext.SaveChangesAsync();
-    }
+    // public async Task UpdateMessageAsync(Message message)
+    //{
+    //    this._dbContext.Messages.Update(new MessageEntity
+    //    {
+    //        Content = message.Content,
+    //        Timestamp = message.Timestamp,
+    //        LastModified = message.LastModified,
+    //    });
+    //    await this._dbContext.SaveChangesAsync();
+    //}
 
     public async Task<Message?> GetMessageByidAsync(Guid id)
     {
-        return await this._dbContext.Messages.FirstOrDefaultAsync(x => x.Id == id);
+        var message = await this._dbContext.Messages.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (message is null)
+        {
+            return null;
+        }
+
+        return new Message
+        {
+            Content = message.Content,
+            LastModified = message.LastModified,
+            Id = id,
+            Timestamp = message.Timestamp,
+        };
     }
 }

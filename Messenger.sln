@@ -13,15 +13,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageClient", "MessageCli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{6EF2A63D-E9E5-443A-BEEB-21AB8C26547F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tandia.Messages", "Tandia.Messages\Tandia.Messages.csproj", "{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tandia.Messages.Application", "Tandia.Messages\Tandia.Messages.Application.csproj", "{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8DDE89DE-584D-454D-B1E6-7F3F75006101}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A612634C-F297-49F7-A40C-521FA825AE87}"
 	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
 		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandia.Messages.Infrastructure", "Tandia.Messages.Infrastructure\Tandia.Messages.Infrastructure.csproj", "{5D336919-FFDA-459D-B43E-32C242678EBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D336919-FFDA-459D-B43E-32C242678EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D336919-FFDA-459D-B43E-32C242678EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D336919-FFDA-459D-B43E-32C242678EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D336919-FFDA-459D-B43E-32C242678EBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +58,7 @@ Global
 		{5A321403-3565-43A1-ABC1-BD3DD7095D97} = {33705011-EAFC-41AD-97EE-3812FB4178C9}
 		{6EF2A63D-E9E5-443A-BEEB-21AB8C26547F} = {D8E730BB-8C13-4AF5-9EBF-8A33C151D9E0}
 		{BA022FBD-BF04-4DDA-BB97-0B0BE6C03723} = {6EF2A63D-E9E5-443A-BEEB-21AB8C26547F}
+		{5D336919-FFDA-459D-B43E-32C242678EBD} = {6EF2A63D-E9E5-443A-BEEB-21AB8C26547F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E25415A5-C165-4DAD-A8A4-BCBC0872726F}

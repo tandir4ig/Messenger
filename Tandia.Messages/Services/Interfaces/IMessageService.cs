@@ -1,6 +1,6 @@
-namespace Tandia.Messages.Services.Interfaces;
+namespace Tandia.Messages.Application.Services.Interfaces;
 
-using Tandia.Messages.Data.Entities;
+using Tandia.Messages.Application.Models;
 
 public interface IMessageService
 {
@@ -8,7 +8,7 @@ public interface IMessageService
 
     Task<Message> SendMessageAsync(Guid id, Message message);
 
-    Task UpdateMessageAsync(Message message);
+    //Task UpdateMessageAsync(Message message);
 
     Task<Message?> GetMessageByidAsync(Guid id);
 }

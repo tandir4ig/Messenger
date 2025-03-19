@@ -1,10 +1,11 @@
-namespace Tandia.Messages.Extensions;
+namespace Tandia.Messages.Application.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Tandia.Messages.Data;
-using Tandia.Messages.Services;
-using Tandia.Messages.Services.Interfaces;
+using Tandia.Messages.Application.Services;
+using Tandia.Messages.Application.Services.Interfaces;
+using Tandia.Messages.Infrastructure.Data;
+using Tandia.Messages.Infrastructure.Services;
 
 public static class ServiceCollectionExtensions
 {
@@ -15,6 +16,8 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(TimeProvider.System);
         services.AddTransient<IMessageService, MessageService>();
+
+        services.AddHostedService<DatabaseMigrationService>();
 
         return services;
     }

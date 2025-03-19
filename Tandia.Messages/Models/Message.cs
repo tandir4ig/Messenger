@@ -1,6 +1,4 @@
-namespace Tandia.Messages.Data.Entities;
-
-using System;
+namespace Tandia.Messages.Application.Models;
 
 public class Message
 {

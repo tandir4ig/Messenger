@@ -2,8 +2,8 @@ namespace Tandia.Messages.WebApi.Controllers;
 
 using System;
 using Microsoft.AspNetCore.Mvc;
-using Tandia.Messages.Data.Entities;
-using Tandia.Messages.Services.Interfaces;
+using Tandia.Messages.Application.Models;
+using Tandia.Messages.Application.Services.Interfaces;
 using Tandia.Messages.WebApi.DTOs.Requests;
 
 [ApiController]

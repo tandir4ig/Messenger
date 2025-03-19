@@ -1,8 +1,8 @@
 namespace MessageApi;
 
 using Microsoft.EntityFrameworkCore;
-using Tandia.Messages.Data;
-using Tandia.Messages.Extensions;
+using Tandia.Messages.Application.Extensions;
+using Tandia.Messages.Infrastructure.Data;
 
 public static class Program
 {
@@ -38,12 +38,6 @@ public static class Program
         }
 
         app.UseHttpsRedirection();
-
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-            db.Database.Migrate();
-        }
 
         app.UseCors("AllowBlazorClient");
 

@@ -1,7 +1,7 @@
-namespace Tandia.Messages.Data;
+namespace Tandia.Messages.Infrastructure.Data;
 
 using Microsoft.EntityFrameworkCore;
-using Tandia.Messages.Data.Entities;
+using Tandia.Messages.Infrastructure.Data.Entities;
 
 public class DatabaseContext : DbContext
 {
@@ -10,5 +10,5 @@ public class DatabaseContext : DbContext
     {
     }
 
-    public DbSet<Message> Messages { get; set; }
+    public DbSet<MessageEntity> Messages { get; set; }
 }

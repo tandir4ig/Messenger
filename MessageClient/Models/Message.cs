@@ -8,5 +8,5 @@ public class Message
 
     public DateTimeOffset Timestamp { get; set; }
 
-    public DateTimeOffset LastModified { get; set; }
+    public DateTimeOffset? LastModified { get; set; }
 }
