@@ -22,10 +22,11 @@
                             @message.Content
                         </div>
                         <div>
-                            <MudIcon
-                            Icon="@Icons.Material.Filled.BorderColor"
-                            Color="Color.Primary" Size="Size.Medium" 
-                            OnClick="@(() => SetValueToId(@message.Id))"/>
+                            <MudIcon Icon="@Icons.Material.Filled.BorderColor"
+                            Color="Color.Primary"
+                            Size="Size.Medium"
+                            @onclick="@(() => SetValueToId(message.Id))"
+                            style="cursor: pointer;" />
                         </div>
                     </div>
                 </div>
@@ -61,6 +62,9 @@
 
             var objecttt = new { Content = newMessage };
             var response = await Http.PutAsJsonAsync($"api/Messages/{guid}", objecttt);
+
+            guid = Guid.NewGuid();
+
             if (response.IsSuccessStatusCode)
             {
                 
@@ -68,12 +72,5 @@
                 messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
             }
         }
-    }
-
-    private async Task UpdateMessage(Message message)
-    {
-        // Здесь вы можете реализовать логику отправки обновленного сообщения на API
-        using var httpClient = new HttpClient();
-        var response = await httpClient.PutAsJsonAsync($"api/Messages/{message.Id}", message);
     }
 }

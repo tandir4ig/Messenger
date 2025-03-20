@@ -126,7 +126,7 @@ code {
 
 .all-message-form {
     /*background-color: lightgray;*/ /* Цвет фона для визуального отделения */
-/*    width: 80%;*/
+    width: 80%;
     overflow-y: scroll;
     height: calc(100vh - 150px);
     overflow-x: hidden;

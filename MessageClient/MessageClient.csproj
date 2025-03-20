@@ -13,10 +13,6 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.3" />
 		<PackageReference Include="MudBlazor" Version="8.3.0" />
 	</ItemGroup>
-  
-	<ItemGroup>
-	  <ProjectReference Include="..\Tandia.Messages.WebApi\Tandia.Messages.WebApi.csproj" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Update="Meziantou.Analyzer" Version="2.0.188" />
