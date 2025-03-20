@@ -1,44 +1,69 @@
 @page "/"
 @using MessageClient.Models
 @inject HttpClient Http
+@using System;
 
-<MudTextField @bind-Value="newMessage" Label="Enter your message" Variant="Variant.Filled" />
-<MudButton OnClick="SendMessage" Color="Color.Primary">Send</MudButton>
+<div class="main-message-body">
+    <div class="all-message-form">
+        @foreach (var message in messages)
+        {
+            <div>
+                <div class="message-form">
+                    <div class="message-form-header">
+                        <div> 
+                            @message.Id
+                        </div>
+                        <div>
+                            @message.Timestamp.ToLocalTime().ToString("T")
+                        </div>
+                    </div>
+                    <div class="message-form-header">
+                        <div> 
+                            @message.Content
+                        </div>
+                        <div>
+                            <MudIcon
+                            Icon="@Icons.Material.Filled.BorderColor"
+                            Color="Color.Primary" Size="Size.Medium" 
+                            OnClick="@(() => SetValueToId(@message.Id))"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="bottom-container">
+        <MudTextField @bind-Value="newMessage" Label="Enter your message" Variant="Variant.Filled" />
+        <MudButton OnClick="SendMessage" Color="Color.Primary">Send</MudButton>
+    </div>
+</div>
 
-<MudList T="string">
-    @foreach (var message in messages)
-    {
-        <MudListItem>
-            <MudText Typo="Typo.body1">@message.Content</MudText>
-            <MudText Typo="Typo.caption">@message.Timestamp.ToLocalTime().ToString("T")</MudText>
+@code {
 
-            <!-- Поле для изменения сообщения -->
-            <MudTextField @bind-Value="message.Content" Label="Изменить сообщение" />
-
-            <!-- Кнопка для отправки обновленного сообщения на API -->
-            <MudButton Color="Color.Primary" OnClick="@(() => UpdateMessage(message))">
-                Обновить сообщение
-            </MudButton>
-        </MudListItem>
-    }
-    </MudList>
-
-    @code {
-    private string newMessage;
+    private string? newMessage;
     private List<Message> messages = new();
+    private Guid guid;
 
     protected override async Task OnInitializedAsync()
     {
+        guid = Guid.NewGuid();
         messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
+    }
+
+    private void SetValueToId(Guid id){
+        guid = id;
     }
 
     private async Task SendMessage()
     {
         if (!string.IsNullOrWhiteSpace(newMessage))
         {
-            var response = await Http.PutAsJsonAsync("api/Messages/{id}", newMessage);
+
+            var objecttt = new { Content = newMessage };
+            var response = await Http.PutAsJsonAsync($"api/Messages/{guid}", objecttt);
             if (response.IsSuccessStatusCode)
             {
+                
                 newMessage = string.Empty;
                 messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
             }
@@ -50,7 +75,5 @@
         // Здесь вы можете реализовать логику отправки обновленного сообщения на API
         using var httpClient = new HttpClient();
         var response = await httpClient.PutAsJsonAsync($"api/Messages/{message.Id}", message);
-
-        
     }
 }

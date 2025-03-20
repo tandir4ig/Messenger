@@ -75,3 +75,63 @@
 code {
     color: #c02d76;
 }
+
+.bottom-container {
+ /* Фиксированное позиционирование */
+    /*bottom: 20px;*/ /* Отступ от нижней части экрана */
+    /*left: 50%;*/ /* Центрирование по горизонтали */
+    /*transform: translateX(-50%);*/ /* Сдвиг для точного центрирования */
+    width: 33%; /* Ширина контейнера 33% от ширины экрана */
+    padding: 16px; /* Отступы для удобства */
+    background-color: white; /* Цвет фона */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Тень для визуального отделения */
+    border-radius: 8px; /* Закругление углов */
+}
+
+.message-form {
+    width: 100%;
+    margin: 0 auto; /* Центрирование div по горизонтали */
+    padding: 5px; /* Отступы для удобства */
+    bottom: 500px;
+    background-color: linen; /* Цвет фона для визуального отделения */
+    border-radius: 13px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Тень для визуального отделения */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 9px;
+}
+
+.message-form-header {
+    display: flex; /* Используем flexbox для расположения элементов в строке */
+    flex-direction: row;
+    justify-content: space-between; /* Распределяем пространство между элементами */
+    align-items: center; /* Центрируем элементы по вертикали */
+}
+
+.message-form-body {
+    display: flex; /* Используем flexbox для расположения элементов в строке */
+    justify-content: space-between; /* Распределяем пространство между элементами */
+    align-items: center; /* Центрируем элементы по вертикали */
+}
+
+.main-message-body {
+
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 66%
+}
+
+.all-message-form {
+    /*background-color: lightgray;*/ /* Цвет фона для визуального отделения */
+/*    width: 80%;*/
+    overflow-y: scroll;
+    height: calc(100vh - 150px);
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+}

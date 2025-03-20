@@ -30,6 +30,14 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script>
+        function setFocus(elementId) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                element.focus(); // Устанавливаем фокус на элемент
+            }
+        }
+    </script>
 </body>
 
 </html>
