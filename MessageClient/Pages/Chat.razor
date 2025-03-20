@@ -14,7 +14,8 @@
                             @message.Id
                         </div>
                         <div>
-                            @message.Timestamp.ToLocalTime().ToString("T")
+                            @GetTime(message)
+                            @* @message.Timestamp.ToLocalTime().ToString("T") *@
                         </div>
                     </div>
                     <div class="message-form-header">
@@ -60,17 +61,30 @@
         if (!string.IsNullOrWhiteSpace(newMessage))
         {
 
-            var objecttt = new { Content = newMessage };
+            var objecttt = new MessageRequest { Content = newMessage };
             var response = await Http.PutAsJsonAsync($"api/Messages/{guid}", objecttt);
 
             guid = Guid.NewGuid();
 
             if (response.IsSuccessStatusCode)
             {
-                
+
                 newMessage = string.Empty;
                 messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
             }
         }
+    }
+
+    private string GetTime(Message message)
+    {
+        if(message.LastModified is null)
+        {
+            return message.Timestamp.ToLocalTime().ToString("T");
+        }
+
+        var localtime = (DateTimeOffset)(object)message.LastModified;
+
+        return localtime.ToLocalTime().ToString("T");
+
     }
 }
