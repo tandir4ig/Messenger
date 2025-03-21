@@ -5,28 +5,27 @@
 
 <div class="main-message-body">
     <div class="all-message-form">
-        @for(int i = messages.Count-1; i >= 0; i--)
+        @foreach (var message in messages)
         {
             <div>
                 <div class="message-form">
                     <div class="message-form-header">
-                        <div> 
-                            @messages[i].Id
+                        <div>
+                            @message.Id
                         </div>
                         <div>
-                            @GetTime(messages[i])
-                            @* @message.Timestamp.ToLocalTime().ToString("T") *@
+                            @GetTime(message)
                         </div>
                     </div>
                     <div class="message-form-header">
                         <div>
-                            @messages[i].Content
+                            @message.Content
                         </div>
                         <div>
                             <MudIcon Icon="@Icons.Material.Filled.BorderColor"
                             Color="Color.Primary"
                             Size="Size.Medium"
-                                     @onclick="@(() => SetValueToId(messages[i].Id))"
+                            @onclick="@(() => SetValueToId(message.Id))"
                             style="cursor: pointer;" />
                         </div>
                     </div>
@@ -50,6 +49,7 @@
     {
         guid = Guid.NewGuid();
         messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
+        messages?.Reverse();
     }
 
     private void SetValueToId(Guid id){
@@ -61,23 +61,23 @@
         if (!string.IsNullOrWhiteSpace(newMessage))
         {
 
-            var objecttt = new MessageRequest { Content = newMessage };
-            var response = await Http.PutAsJsonAsync($"api/Messages/{guid}", objecttt);
+            var messageRequest = new MessageRequest { Content = newMessage };
+            var response = await Http.PutAsJsonAsync($"api/Messages/{guid}", messageRequest);
 
             guid = Guid.NewGuid();
 
             if (response.IsSuccessStatusCode)
             {
-
                 newMessage = string.Empty;
                 messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
+                messages?.Reverse();
             }
         }
     }
 
     private string GetTime(Message message)
     {
-        if(message.LastModified is null)
+        if (message.LastModified is null)
         {
             return message.Timestamp.ToLocalTime().ToString("T");
         }
@@ -85,6 +85,5 @@
         var localtime = (DateTimeOffset)(object)message.LastModified;
 
         return localtime.ToLocalTime().ToString("T");
-
     }
 }

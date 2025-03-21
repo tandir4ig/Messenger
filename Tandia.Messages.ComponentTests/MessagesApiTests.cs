@@ -1,26 +1,45 @@
+namespace Tandia.Messages.ComponentTests;
+
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Tandia.Messages.Application.Models;
+using Tandia.Messages.WebApi.DTOs.Requests;
 
-namespace Tandia.Messages.ComponentTests;
-
-public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>
+public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>, IAsyncLifetime
 {
-    private readonly HttpClient _httpClient;
     private readonly TandiaWebApplicationFactory _factory;
 
     public MessagesApiTests(TandiaWebApplicationFactory applicationFactory)
     {
-        _httpClient = applicationFactory.CreateClient();
         _factory = applicationFactory;
     }
 
     [Fact]
-    public async Task GetMessages_InitiallyEmpty()
+    public async Task SendTwoMessages_ShouldBeInRightOrder()
     {
+        // Arrange
+        var _httpClient = _factory.CreateClient();
+        var firstMessage = new MessageRequestDto { Content = "First" };
+        var secondMessage = new MessageRequestDto { Content = "Second" };
+
         // Act
-        var response = await _httpClient.GetAsync("/api/messages");
+        await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", firstMessage);
+        await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", secondMessage);
+
+        // Assert
+        var messages = await _httpClient.GetFromJsonAsync<List<Message>>("/api/messages");
+        messages.Should().BeInDescendingOrder(m => m.Timestamp);
+    }
+
+    [Fact]
+    public async Task GetMessages_WhenNoMessages_MessageListShouldBeEmpty()
+    {
+        // Arrange
+        var _httpClient = _factory.CreateClient();
+
+        // Act
+        var response = await _httpClient.GetAsync("api/messages");
         var messages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
 
         // Assert
@@ -28,48 +47,48 @@ public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    //[Fact]
-    //public async Task SendMessage_MessageAppearsInList()
-    //{
-    //    var newMessage = new Message { Content = "Hello, World!" };
-    //    var response = await _client.PostAsJsonAsync("/api/messages", newMessage);
-    //    response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+    [Fact]
+    public async Task SendMessage_WhenMessageSent_MessageAppearsInList()
+    {
+        // Arrange
+        var _httpClient = _factory.CreateClient();
+        var newMessage = new MessageRequestDto() { Content = "text" };
 
-    //    var getResponse = await _client.GetAsync("/api/messages");
-    //    var messages = await getResponse.Content.ReadAsAsync<List<Message>>();
-    //    messages.Should().ContainSingle().Which.Content.Should().Be("Hello, World!");
-    //}
+        // Act
+        var response = await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", newMessage);
+        var messages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
 
-    //[Fact]
-    //public async Task SendTwoMessages_MessagesInOrder()
-    //{
-    //    var firstMessage = new Message { Content = "First" };
-    //    var secondMessage = new Message { Content = "Second" };
+        // Assert
+        messages.Should().ContainSingle().Which.Content.Should().Be("text");
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
 
-    //    await _client.PostAsJsonAsync("/api/messages", firstMessage);
-    //    await _client.PostAsJsonAsync("/api/messages", secondMessage);
+    [Fact]
+    public async Task SendMessage_WhenSameMessageSentWithDifferentText_ShouldUpdateMessage()
+    {
+        // Arrange
+        var _httpClient = _factory.CreateClient();
+        var text = new MessageRequestDto { Content = "Original" };
+        var updatedText = new MessageRequestDto { Content = "Updated" };
 
-    //    var response = await _client.GetAsync("/api/messages");
-    //    var messages = await response.Content.ReadAsAsync<List<Message>>();
+        // Act
+        await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", text);
+        var messages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
+        await _httpClient.PutAsJsonAsync($"api/Messages/{messages?[0].Id}", updatedText);
+        var updatedMessages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
 
-    //    messages.Should().HaveCount(2);
-    //    messages[0].Content.Should().Be("First");
-    //    messages[1].Content.Should().Be("Second");
-    //}
+        // Assert
+        updatedMessages.Should().ContainSingle().Which.Content.Should().Be("Updated");
+        updatedMessages[0].LastModified.Should().NotBeNull();
+    }
 
-    //[Fact]
-    //public async Task UpdateMessage_MessageUpdatedInList()
-    //{
-    //    var message = new Message { Content = "Original" };
-    //    var postResponse = await _client.PostAsJsonAsync("/api/messages", message);
-    //    var createdMessage = await postResponse.Content.ReadAsAsync<Message>();
+    public async Task InitializeAsync()
+    {
+        await _factory.ResetAsync();
+    }
 
-    //    createdMessage.Content = "Updated";
-    //    await _client.PutAsJsonAsync($"/api/messages/{createdMessage.Id}", createdMessage);
-
-    //    var response = await _client.GetAsync("/api/messages");
-    //    var messages = await response.Content.ReadAsAsync<List<Message>>();
-
-    //    messages.Should().ContainSingle().Which.Content.Should().Be("Updated");
-    //}
+    Task IAsyncLifetime.DisposeAsync()
+    {
+        return Task.CompletedTask;
+    }
 }
