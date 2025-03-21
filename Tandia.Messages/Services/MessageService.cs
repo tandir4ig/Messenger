@@ -1,5 +1,6 @@
 namespace Tandia.Messages.Application.Services;
 
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Tandia.Messages.Application.Models;
 using Tandia.Messages.Application.Services.Interfaces;
@@ -36,7 +37,7 @@ public class MessageService : IMessageService
             messages.Add(message);
         }
 
-        return messages;
+        return messages.AsEnumerable().Reverse().ToList();
     }
 
     public async Task<Message> SendMessageAsync(Guid id, Message message)

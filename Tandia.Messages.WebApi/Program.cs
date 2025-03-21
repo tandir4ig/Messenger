@@ -2,9 +2,8 @@ namespace MessageApi;
 
 using Microsoft.EntityFrameworkCore;
 using Tandia.Messages.Application.Extensions;
-using Tandia.Messages.Infrastructure.Data;
 
-public static class Program
+public class Program
 {
     public static void Main(string[] args)
     {

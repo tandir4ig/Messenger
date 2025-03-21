@@ -8,7 +8,5 @@ public interface IMessageService
 
     Task<Message> SendMessageAsync(Guid id, Message message);
 
-    //Task UpdateMessageAsync(Message message);
-
     Task<Message?> GetMessageByidAsync(Guid id);
 }
