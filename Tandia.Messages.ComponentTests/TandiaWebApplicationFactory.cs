@@ -1,6 +1,3 @@
-namespace Tandia.Messages.ComponentTests;
-
-using MessageApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Tandia.Messages.Infrastructure.Data;
 using Tandia.Messages.Infrastructure.Services;
+using Tandia.Messages.WebApi;
+
+namespace Tandia.Messages.ComponentTests;
 
 public class TandiaWebApplicationFactory : WebApplicationFactory<Program>
 {

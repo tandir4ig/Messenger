@@ -1,11 +1,10 @@
-namespace Tandia.Messages.Application.Services;
-
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Tandia.Messages.Application.Models;
 using Tandia.Messages.Application.Services.Interfaces;
 using Tandia.Messages.Infrastructure.Data;
 using Tandia.Messages.Infrastructure.Data.Entities;
+
+namespace Tandia.Messages.Application.Services;
 
 public class MessageService : IMessageService
 {
@@ -77,35 +76,6 @@ public class MessageService : IMessageService
             Content = _message.Content,
             Timestamp = _message.Timestamp,
             LastModified = _message.LastModified,
-        };
-    }
-
-    // public async Task UpdateMessageAsync(Message message)
-    //{
-    //    this._dbContext.Messages.Update(new MessageEntity
-    //    {
-    //        Content = message.Content,
-    //        Timestamp = message.Timestamp,
-    //        LastModified = message.LastModified,
-    //    });
-    //    await this._dbContext.SaveChangesAsync();
-    //}
-
-    public async Task<Message?> GetMessageByidAsync(Guid id)
-    {
-        var message = await this._dbContext.Messages.FirstOrDefaultAsync(x => x.Id == id);
-
-        if (message is null)
-        {
-            return null;
-        }
-
-        return new Message
-        {
-            Content = message.Content,
-            LastModified = message.LastModified,
-            Id = id,
-            Timestamp = message.Timestamp,
         };
     }
 }

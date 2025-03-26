@@ -1,11 +1,11 @@
-namespace Tandia.Messages.Infrastructure.Services;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Tandia.Messages.Infrastructure.Data;
 
-public class DatabaseMigrationService : IHostedService
+namespace Tandia.Messages.Infrastructure.Services;
+
+public sealed class DatabaseMigrationService : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
 
