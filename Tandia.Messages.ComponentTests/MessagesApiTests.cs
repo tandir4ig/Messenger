@@ -1,10 +1,10 @@
-namespace Tandia.Messages.ComponentTests;
-
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Tandia.Messages.Application.Models;
 using Tandia.Messages.WebApi.DTOs.Requests;
+
+namespace Tandia.Messages.ComponentTests;
 
 public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>, IAsyncLifetime
 {

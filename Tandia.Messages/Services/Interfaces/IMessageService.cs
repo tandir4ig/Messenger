@@ -1,12 +1,10 @@
-namespace Tandia.Messages.Application.Services.Interfaces;
-
 using Tandia.Messages.Application.Models;
+
+namespace Tandia.Messages.Application.Services.Interfaces;
 
 public interface IMessageService
 {
-    Task<IEnumerable<Message?>> GetAllAsync();
+    Task<IReadOnlyCollection<Message?>> GetAllAsync();
 
-    Task<Message> SendMessageAsync(Guid id, Message message);
-
-    Task<Message?> GetMessageByidAsync(Guid id);
+    Task<Message> SendMessageAsync(Message message);
 }

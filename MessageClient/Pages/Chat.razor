@@ -48,7 +48,7 @@
     protected override async Task OnInitializedAsync()
     {
         guid = Guid.NewGuid();
-        messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
+        messages = await Http.GetFromJsonAsync<List<Message>>("api/messages");
         messages?.Reverse();
     }
 
@@ -62,7 +62,7 @@
         {
 
             var messageRequest = new MessageRequest { Content = newMessage };
-            var response = await Http.PutAsJsonAsync($"api/Messages/{guid}", messageRequest);
+            var response = await Http.PutAsJsonAsync($"api/messages/{guid}", messageRequest);
 
             guid = Guid.NewGuid();
 
