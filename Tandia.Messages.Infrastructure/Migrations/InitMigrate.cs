@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tandia.Messages.Infrastructure.Migrations;
 
 /// <inheritdoc />
-public partial class init : Migration
+public sealed partial class InitMigrate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ public partial class init : Migration
             columns: table => new
             {
                 Id = table.Column<Guid>(type: "uuid", nullable: false),
-                Content = table.Column<string>(type: "text", nullable: false),
+                Content = table.Column<string>(type: "text", nullable: true),
                 Timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                 LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
             },

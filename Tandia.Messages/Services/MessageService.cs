@@ -17,7 +17,7 @@ public class MessageService : IMessageService
         this._timeProvider = timeProvider;
     }
 
-    public async Task<IEnumerable<Message?>> GetAllAsync()
+    public async Task<IReadOnlyCollection<Message?>> GetAllAsync()
     {
         var messageEntities = await this._dbContext.Messages.ToListAsync();
 
@@ -39,7 +39,7 @@ public class MessageService : IMessageService
         return messages.AsEnumerable().Reverse().ToList();
     }
 
-    public async Task<Message> SendMessageAsync(Guid id, Message message)
+    public async Task<Message> SendMessageAsync(Guid id, string content)
     {
         var _message = await this._dbContext.Messages.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -47,7 +47,7 @@ public class MessageService : IMessageService
         {
             _message = new MessageEntity
             {
-                Content = message.Content,
+                Content = content,
                 Timestamp = _timeProvider.GetUtcNow(),
                 LastModified = null,
             };
@@ -64,7 +64,7 @@ public class MessageService : IMessageService
             };
         }
 
-        _message.Content = message.Content;
+        _message.Content = content;
         _message.LastModified = _timeProvider.GetUtcNow();
 
         this._dbContext.Messages.Update(_message);

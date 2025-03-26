@@ -29,7 +29,6 @@ namespace Tandia.Messages.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("LastModified")

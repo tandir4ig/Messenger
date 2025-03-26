@@ -12,8 +12,8 @@ using Tandia.Messages.Infrastructure.Data;
 namespace Tandia.Messages.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250319121150_init")]
-    partial class init
+    [Migration("20250326185553_InitMigrate")]
+    partial class InitMigrate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,6 @@ namespace Tandia.Messages.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("LastModified")

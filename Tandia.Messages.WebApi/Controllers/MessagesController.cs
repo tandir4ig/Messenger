@@ -26,7 +26,7 @@ public sealed class MessagesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(Guid id, [FromBody] MessageRequestDto input)
     {
-        var message = await messageService.SendMessageAsync(new Message(id, input.Content));
+        var message = await messageService.SendMessageAsync(id, input.Content);
 
         if (message.LastModified is null)
         {

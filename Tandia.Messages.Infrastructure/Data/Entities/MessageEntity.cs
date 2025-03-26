@@ -2,6 +2,10 @@ namespace Tandia.Messages.Infrastructure.Data.Entities;
 
 public sealed class MessageEntity
 {
+    public MessageEntity()
+    {
+    }
+
     public MessageEntity(string content)
     {
         Content = content;

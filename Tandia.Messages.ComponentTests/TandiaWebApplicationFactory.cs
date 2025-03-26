@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Tandia.Messages.Infrastructure.Data;
 using Tandia.Messages.Infrastructure.Services;
-using Tandia.Messages.WebApi;
 
 namespace Tandia.Messages.ComponentTests;
 
