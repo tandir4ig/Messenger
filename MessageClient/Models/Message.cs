@@ -1,6 +1,6 @@
 namespace MessageClient.Models;
 
-public class Message
+public sealed class Message
 {
     public Guid Id { get; set; }
 

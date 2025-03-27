@@ -1,6 +1,6 @@
 namespace MessageClient.Models;
 
-public class MessageRequest
+public sealed class MessageRequest
 {
     public string? Content { get; set; }
 }

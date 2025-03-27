@@ -9,7 +9,7 @@ using Tandia.Messages.Infrastructure.Services;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddMessages(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddMessages(this IServiceCollection services, string? connectionString)
     {
         services.AddDbContext<DatabaseContext>(options =>
                 options.UseNpgsql(connectionString));
