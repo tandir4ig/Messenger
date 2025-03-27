@@ -6,41 +6,39 @@ using Tandia.Messages.WebApi.DTOs.Requests;
 
 namespace Tandia.Messages.ComponentTests;
 
-public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>, IAsyncLifetime
+public sealed class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>, IAsyncLifetime
 {
-    private readonly TandiaWebApplicationFactory _factory;
+    private readonly TandiaWebApplicationFactory factory;
+    private readonly HttpClient client;
 
     public MessagesApiTests(TandiaWebApplicationFactory applicationFactory)
     {
-        _factory = applicationFactory;
+        factory = applicationFactory;
+        client = factory.CreateClient();
     }
 
     [Fact]
     public async Task SendTwoMessages_ShouldBeInRightOrder()
     {
         // Arrange
-        var _httpClient = _factory.CreateClient();
         var firstMessage = new MessageRequestDto { Content = "First" };
         var secondMessage = new MessageRequestDto { Content = "Second" };
 
         // Act
-        await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", firstMessage);
-        await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", secondMessage);
+        await client.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", firstMessage);
+        await client.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", secondMessage);
 
         // Assert
-        var messages = await _httpClient.GetFromJsonAsync<List<Message>>("/api/messages");
-        messages.Should().BeInDescendingOrder(m => m.Timestamp);
+        var messages = await client.GetFromJsonAsync<List<Message>>("/api/messages");
+        messages.Should().BeInAscendingOrder(m => m.Timestamp);
     }
 
     [Fact]
     public async Task GetMessages_WhenNoMessages_MessageListShouldBeEmpty()
     {
-        // Arrange
-        var _httpClient = _factory.CreateClient();
-
         // Act
-        var response = await _httpClient.GetAsync("api/messages");
-        var messages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
+        var response = await client.GetAsync("api/messages");
+        var messages = await response.Content.ReadFromJsonAsync<List<Message>>();
 
         // Assert
         messages.Should().BeEmpty();
@@ -51,12 +49,11 @@ public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>, IAsy
     public async Task SendMessage_WhenMessageSent_MessageAppearsInList()
     {
         // Arrange
-        var _httpClient = _factory.CreateClient();
         var newMessage = new MessageRequestDto() { Content = "text" };
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", newMessage);
-        var messages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
+        var response = await client.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", newMessage);
+        var messages = await client.GetFromJsonAsync<List<Message>>("api/Messages");
 
         // Assert
         messages.Should().ContainSingle().Which.Content.Should().Be("text");
@@ -67,15 +64,14 @@ public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>, IAsy
     public async Task SendMessage_WhenSameMessageSentWithDifferentText_ShouldUpdateMessage()
     {
         // Arrange
-        var _httpClient = _factory.CreateClient();
         var text = new MessageRequestDto { Content = "Original" };
         var updatedText = new MessageRequestDto { Content = "Updated" };
 
         // Act
-        await _httpClient.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", text);
-        var messages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
-        await _httpClient.PutAsJsonAsync($"api/Messages/{messages?[0].Id}", updatedText);
-        var updatedMessages = await _httpClient.GetFromJsonAsync<List<Message>>("api/Messages");
+        await client.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", text);
+        var messages = await client.GetFromJsonAsync<List<Message>>("api/Messages");
+        await client.PutAsJsonAsync($"api/Messages/{messages?[0].Id}", updatedText);
+        var updatedMessages = await client.GetFromJsonAsync<List<Message>>("api/Messages");
 
         // Assert
         updatedMessages.Should().ContainSingle().Which.Content.Should().Be("Updated");
@@ -84,7 +80,7 @@ public class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory>, IAsy
 
     public async Task InitializeAsync()
     {
-        await _factory.ResetAsync();
+        await factory.ResetAsync();
     }
 
     Task IAsyncLifetime.DisposeAsync()

@@ -24,11 +24,12 @@
                                 @message.Content
                             </div>
                             <div>
+                                @IsUpdated(message)
                                 <MudIcon Icon="@Icons.Material.Filled.BorderColor"
-                                         Color="Color.Primary"
-                                         Size="Size.Medium"
-                                         @onclick="@(() => SetValueToId(message.Id))"
-                                         style="cursor: pointer;" />
+                                Color="Color.Primary"
+                                Size="Size.Medium"
+                                @onclick="@(() => SetValueToId(message.Id))"
+                                style="cursor: pointer;" />
                             </div>
                         </div>
                     </div>
@@ -52,7 +53,6 @@
     {
         guid = Guid.NewGuid();
         messages = await Http.GetFromJsonAsync<List<Message>>("api/messages");
-        messages?.Reverse();
     }
 
     private void SetValueToId(Guid id){
@@ -73,7 +73,6 @@
             {
                 newMessage = string.Empty;
                 messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
-                messages?.Reverse();
             }
         }
     }
@@ -88,5 +87,15 @@
         var localtime = (DateTimeOffset)(object)message.LastModified;
 
         return localtime.ToLocalTime().ToString("F");
+    }
+
+    private static string? IsUpdated(Message message)
+    {
+        if (message.LastModified != null)
+        {
+            return "message updated";
+        }
+
+        return null;
     }
 }

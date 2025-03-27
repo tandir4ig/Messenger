@@ -1,5 +1,9 @@
 namespace Tandia.Messages.ComponentTests;
 
-public partial class Program
+public sealed partial class Program
 {
+    public static Program CreateInstance()
+    {
+        return new Program();
+    }
 }

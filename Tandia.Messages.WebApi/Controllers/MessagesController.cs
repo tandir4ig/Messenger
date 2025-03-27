@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Tandia.Messages.Application.Enums;
 using Tandia.Messages.Application.Models;
 using Tandia.Messages.Application.Services.Interfaces;
 using Tandia.Messages.WebApi.DTOs.Requests;
@@ -17,7 +18,7 @@ public sealed class MessagesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Message>>> Get()
+    public async Task<ActionResult<IReadOnlyCollection<Message>>> Get()
     {
         var messages = await messageService.GetAllAsync();
         return Ok(messages);
@@ -26,13 +27,18 @@ public sealed class MessagesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(Guid id, [FromBody] MessageRequestDto input)
     {
-        var message = await messageService.SendMessageAsync(id, input.Content);
+        var result = await messageService.SendMessageAsync(id, input.Content);
 
-        if (message.LastModified is null)
+        if (result is MessageStatus.Created)
         {
-            return CreatedAtAction(nameof(Get), new { id = message.Id }, message);
+            return StatusCode(201);
         }
 
-        return NoContent();
+        if (result is MessageStatus.Updated)
+        {
+            return StatusCode(204);
+        }
+
+        return StatusCode(400);
     }
 }

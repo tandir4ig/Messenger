@@ -1,21 +1,12 @@
 namespace Tandia.Messages.Application.Models;
 
-public class Message
+public sealed class Message(Guid id, string content, DateTimeOffset timestamp, DateTimeOffset? lastModified)
 {
-    public Message()
-    {
-    }
+    public Guid Id { get; } = id;
 
-    public Message(string content)
-    {
-        Content = content;
-    }
+    public string Content { get; } = content;
 
-    public Guid Id { get; set; }
+    public DateTimeOffset Timestamp { get; } = timestamp;
 
-    public string? Content { get; set; }
-
-    public DateTimeOffset Timestamp { get; set; }
-
-    public DateTimeOffset? LastModified { get; set; }
+    public DateTimeOffset? LastModified { get; } = lastModified;
 }

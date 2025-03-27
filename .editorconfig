@@ -9,6 +9,28 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+dotnet_diagnostic.SA0001.severity = none
+
+[**/Migrations/**]
+generated_code = true
+
+dotnet_diagnostic.CS1591.severity = none  # Missing XML comment
+dotnet_diagnostic.CS8618.severity = none  # Non-nullable property must contain a non-null value
+dotnet_diagnostic.SA1600.severity = none  # Elements should be documented
+dotnet_diagnostic.SA1649.severity = none  # File name should match first type name
+dotnet_diagnostic.SA1633.severity = none  # File should have header
+dotnet_diagnostic.SA1200.severity = none  # Using directive should appear within a namespace declaration
+dotnet_diagnostic.SA1208.severity = none  # System using directives should be placed before other using directives
+dotnet_diagnostic.SA1516.severity = none  # Elements should be separated by blank line
+dotnet_diagnostic.SA1505.severity = none  # Opening braces should not be followed by blank line
+dotnet_diagnostic.SA1507.severity = none  # Code should not contain multiple blank lines in a row
+dotnet_diagnostic.SA1508.severity = none  # Closing braces should not be preceded by blank line
+dotnet_diagnostic.SA1413.severity = none  # Use trailing comma in multi-line initializers
+
+[**/Migrations/**.cs]
+dotnet_analyzer_diagnostic.category-Style.severity = none
+dotnet_analyzer_diagnostic.category-CodeQuality.severity = none 
+
 [*.yml]
 indent_size = 2
 
@@ -21,6 +43,8 @@ indent_size = 2
 
 ## any static analysis issue is an error
 #dotnet_analyzer_diagnostic.severity = error
+
+dotnet_diagnostic.SA0001.severity = none 
 
 # exceptions don't have to have a parameterless constructor in case you need error details in it
 dotnet_diagnostic.CA1032.severity = none

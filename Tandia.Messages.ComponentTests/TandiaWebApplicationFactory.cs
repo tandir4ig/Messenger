@@ -8,13 +8,13 @@ using Tandia.Messages.Infrastructure.Services;
 
 namespace Tandia.Messages.ComponentTests;
 
-public class TandiaWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class TandiaWebApplicationFactory : WebApplicationFactory<WebApi.Controllers.MessagesController>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            var DbContext = services.SingleOrDefault(
+            var dbContext = services.SingleOrDefault(
                 context => context.ServiceType == typeof(IDbContextOptionsConfiguration<DatabaseContext>));
 
             var service = services.SingleOrDefault(
@@ -25,9 +25,9 @@ public class TandiaWebApplicationFactory : WebApplicationFactory<Program>
                 services.Remove(service);
             }
 
-            if (DbContext != null)
+            if (dbContext != null)
             {
-                services.Remove(DbContext);
+                services.Remove(dbContext);
             }
 
             services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase("DbInMemory"));

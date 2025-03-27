@@ -2,10 +2,6 @@ namespace Tandia.Messages.Infrastructure.Data.Entities;
 
 public sealed class MessageEntity
 {
-    public MessageEntity()
-    {
-    }
-
     public MessageEntity(string content)
     {
         Content = content;
@@ -13,7 +9,7 @@ public sealed class MessageEntity
 
     public Guid Id { get; set; }
 
-    public string? Content { get; set; }
+    public string Content { get; set; }
 
     public DateTimeOffset Timestamp { get; set; }
 
