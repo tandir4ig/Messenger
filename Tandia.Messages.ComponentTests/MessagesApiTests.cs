@@ -21,8 +21,8 @@ public sealed class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory
     public async Task SendTwoMessages_ShouldBeInRightOrder()
     {
         // Arrange
-        var firstMessage = new MessageRequestDto { Content = "First" };
-        var secondMessage = new MessageRequestDto { Content = "Second" };
+        var firstMessage = new MessageRequestDto("First");
+        var secondMessage = new MessageRequestDto("First");
 
         // Act
         await client.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", firstMessage);
@@ -30,7 +30,7 @@ public sealed class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory
 
         // Assert
         var messages = await client.GetFromJsonAsync<List<Message>>("/api/messages");
-        messages.Should().BeInAscendingOrder(m => m.Timestamp);
+        messages.Should().BeInDescendingOrder(m => m.Timestamp);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public sealed class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory
     public async Task SendMessage_WhenMessageSent_MessageAppearsInList()
     {
         // Arrange
-        var newMessage = new MessageRequestDto() { Content = "text" };
+        var newMessage = new MessageRequestDto("text");
 
         // Act
         var response = await client.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", newMessage);
@@ -64,8 +64,8 @@ public sealed class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory
     public async Task SendMessage_WhenSameMessageSentWithDifferentText_ShouldUpdateMessage()
     {
         // Arrange
-        var text = new MessageRequestDto { Content = "Original" };
-        var updatedText = new MessageRequestDto { Content = "Updated" };
+        var text = new MessageRequestDto("Original");
+        var updatedText = new MessageRequestDto("Updated");
 
         // Act
         await client.PutAsJsonAsync($"api/Messages/{Guid.NewGuid()}", text);

@@ -25,7 +25,6 @@ namespace Tandia.Messages.Infrastructure.Migrations
             modelBuilder.Entity("Tandia.Messages.Infrastructure.Data.Entities.MessageEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Content")

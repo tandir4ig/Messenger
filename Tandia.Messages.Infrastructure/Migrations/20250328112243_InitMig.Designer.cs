@@ -12,7 +12,7 @@ using Tandia.Messages.Infrastructure.Data;
 namespace Tandia.Messages.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250327095356_InitMig")]
+    [Migration("20250328112243_InitMig")]
     partial class InitMig
     {
         /// <inheritdoc />
@@ -28,7 +28,6 @@ namespace Tandia.Messages.Infrastructure.Migrations
             modelBuilder.Entity("Tandia.Messages.Infrastructure.Data.Entities.MessageEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Content")

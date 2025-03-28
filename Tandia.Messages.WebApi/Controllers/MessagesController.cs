@@ -8,15 +8,8 @@ namespace Tandia.Messages.WebApi.Controllers;
 
 [ApiController]
 [Route("api/messages")]
-public sealed class MessagesController : ControllerBase
+public sealed class MessagesController(IMessageService messageService) : ControllerBase
 {
-    private readonly IMessageService messageService;
-
-    public MessagesController(IMessageService messageService)
-    {
-        this.messageService = messageService;
-    }
-
     [HttpGet]
     public async Task<ActionResult<IReadOnlyCollection<Message>>> Get()
     {
@@ -29,16 +22,13 @@ public sealed class MessagesController : ControllerBase
     {
         var result = await messageService.SendMessageAsync(id, input.Content);
 
-        if (result is MessageStatus.Created)
+        return result switch
         {
-            return StatusCode(201);
-        }
+            MessageStatus.Created => Created(),
 
-        if (result is MessageStatus.Updated)
-        {
-            return StatusCode(204);
-        }
+            MessageStatus.Updated => NoContent(),
 
-        return StatusCode(400);
+            _ => BadRequest(),
+        };
     }
 }

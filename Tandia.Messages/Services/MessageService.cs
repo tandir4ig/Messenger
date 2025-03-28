@@ -7,21 +7,12 @@ using Tandia.Messages.Infrastructure.Data.Entities;
 
 namespace Tandia.Messages.Application.Services;
 
-public sealed class MessageService : IMessageService
+internal sealed class MessageService(DatabaseContext dbContext, TimeProvider timeProvider) : IMessageService
 {
-    private readonly DatabaseContext dbContext;
-    private readonly TimeProvider timeProvider;
-
-    public MessageService(DatabaseContext context, TimeProvider provider)
-    {
-        dbContext = context;
-        timeProvider = provider;
-    }
-
-    public async Task<IReadOnlyCollection<Message?>> GetAllAsync()
+    public async Task<IReadOnlyCollection<Message>> GetAllAsync()
     {
         var messageEntities = await dbContext.Messages
-            .OrderBy(m => m.Timestamp)
+            .OrderByDescending(m => m.Timestamp)
             .ToListAsync();
 
         var messages = messageEntities.ConvertAll(ConvertToMessage);
@@ -35,16 +26,17 @@ public sealed class MessageService : IMessageService
 
         if (message is null)
         {
-            message = new MessageEntity(content)
-            {
-                Timestamp = timeProvider.GetUtcNow(),
-                LastModified = null,
-            };
+            var messageEntity = new MessageEntity(id, content, timeProvider.GetUtcNow(), lastModified: null);
 
-            await dbContext.Messages.AddAsync(message);
+            await dbContext.Messages.AddAsync(messageEntity);
             await dbContext.SaveChangesAsync();
 
             return MessageStatus.Created;
+        }
+
+        if (message.Content == content)
+        {
+            return MessageStatus.NotUpdated;
         }
 
         message.Content = content;
@@ -55,8 +47,5 @@ public sealed class MessageService : IMessageService
         return MessageStatus.Updated;
     }
 
-    private static Message ConvertToMessage(MessageEntity entity)
-    {
-        return new Message(entity.Id, entity.Content, entity.Timestamp, entity.LastModified);
-    }
+    private static Message ConvertToMessage(MessageEntity entity) => new(entity.Id, entity.Content, entity.Timestamp, entity.LastModified);
 }

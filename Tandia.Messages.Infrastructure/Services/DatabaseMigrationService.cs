@@ -5,7 +5,7 @@ using Tandia.Messages.Infrastructure.Data;
 
 namespace Tandia.Messages.Infrastructure.Services;
 
-public sealed class DatabaseMigrationService : IHostedService
+internal sealed class DatabaseMigrationService : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
 
