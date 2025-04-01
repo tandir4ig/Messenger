@@ -1,4 +1,4 @@
-using Tandia.Messages.Application.Extensions;
+using Tandia.Messages.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +15,12 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddMessages(
-    builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
+builder.Services.AddMessageServices(
+    builder.Configuration.GetConnectionString(
+        "DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
 
 builder.Services.AddControllers();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

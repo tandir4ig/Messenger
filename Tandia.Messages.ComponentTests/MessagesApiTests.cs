@@ -78,6 +78,23 @@ public sealed class MessagesApiTests : IClassFixture<TandiaWebApplicationFactory
         updatedMessages[0].LastModified.Should().NotBeNull();
     }
 
+    [Fact]
+    public async Task SendMessage_WhenSameMessageWithTheSameText_ShouldNotUpdateMessage()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var text = new MessageRequestDto("hello");
+
+        // Act
+        await client.PutAsJsonAsync($"api/messages/{id}", text);
+        await client.PutAsJsonAsync($"api/messages/{id}", text);
+        var messages = await client.GetFromJsonAsync<List<Message>>("api/messages");
+
+        // Assert
+        messages.Should().ContainSingle();
+        messages[0].LastModified.Should().BeNull();
+    }
+
     public async Task InitializeAsync()
     {
         await factory.ResetAsync();

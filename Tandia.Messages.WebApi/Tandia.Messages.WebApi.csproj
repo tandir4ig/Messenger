@@ -12,7 +12,4 @@
     <ProjectReference Include="..\Tandia.Messages\Tandia.Messages.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\Responses\" />
-  </ItemGroup>
 </Project>
