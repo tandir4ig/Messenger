@@ -1,12 +1,10 @@
-using Tandia.Identity.Infrastructure.Services;
-using Tandia.Identity.WebApi.Models;
+using Tandia.Identity.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-builder.Services.AddHostedService<MigrationService>();
+builder.Services.AddIdentityServices();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

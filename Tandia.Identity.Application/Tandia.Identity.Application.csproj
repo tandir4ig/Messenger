@@ -1,7 +1,1 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-</Project>
+<Project Sdk="Microsoft.NET.Sdk" />
