@@ -1,6 +1,6 @@
 namespace Tandia.Identity.Application.Services.Interfaces;
 
-internal interface IPasswordService
+public interface IPasswordService
 {
     (string HashedPassword, string Salt) HashPassword(string password);
 

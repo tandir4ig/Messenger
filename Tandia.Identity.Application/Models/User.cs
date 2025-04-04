@@ -1,8 +1,8 @@
 namespace Tandia.Identity.Application.Models;
 
-internal class User
+internal sealed class User
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public DateTime RegistrationDate { get; init; }
+    public required DateTimeOffset RegistrationDate { get; init; }
 }

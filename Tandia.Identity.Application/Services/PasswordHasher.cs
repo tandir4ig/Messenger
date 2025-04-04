@@ -1,12 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
-using Tandia.Identity.Application.Services.Interfaces;
 
 namespace Tandia.Identity.Application.Services;
 
-public sealed class PasswordService : IPasswordService
+internal static class PasswordHasher
 {
-    public (string HashedPassword, string Salt) HashPassword(string password)
+    public static (string HashedPassword, string Salt) HashPassword(string password)
     {
         // Генерация соли
         var salt = new byte[16];
@@ -18,7 +17,7 @@ public sealed class PasswordService : IPasswordService
         return (Convert.ToBase64String(salt), Convert.ToBase64String(hash));
     }
 
-    public bool VerifyPassword(string password, string hashedPassword, string salt)
+    public static bool VerifyPassword(string password, string hashedPassword, string salt)
     {
         return HashPasswordWithSalt(
             Encoding.UTF8.GetBytes(password),

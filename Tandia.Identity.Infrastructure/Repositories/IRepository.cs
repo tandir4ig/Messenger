@@ -1,10 +1,12 @@
-namespace Tandia.Identity.Application.Repositories;
+namespace Tandia.Identity.Infrastructure.Repositories;
 
 public interface IRepository<T>
 {
     Task<T?> GetByIdAsync(Guid id);
 
-    Task<IEnumerable<T>> GetAllAsync();
+    Task<T?> GetByEmailAsync(string email);
+
+    Task<IReadOnlyCollection<T>> GetAllAsync();
 
     Task AddAsync(T entity);
 

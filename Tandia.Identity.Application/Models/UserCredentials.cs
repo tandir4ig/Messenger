@@ -1,6 +1,6 @@
 namespace Tandia.Identity.Application.Models;
 
-internal class UserCredentials
+internal sealed class UserCredentials
 {
     public Guid Id { get; init; }
 

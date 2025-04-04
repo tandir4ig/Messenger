@@ -4,7 +4,4 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.3" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Tandia.Identity.Application\Tandia.Identity.Application.csproj" />
-  </ItemGroup>
 </Project>
