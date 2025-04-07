@@ -1,4 +1,5 @@
 using Tandia.Identity.Application.Enums;
+using Tandia.Identity.Application.Models.Responses;
 using Tandia.Identity.Application.Services.Interfaces;
 using Tandia.Identity.Infrastructure.Models;
 using Tandia.Identity.Infrastructure.Repositories;
@@ -10,6 +11,7 @@ public sealed class IdentityService(
     IRepository<UserEntity> userRepository,
     IRepository<UserCredentialsEntity> credentialsRepository,
     IPasswordService passwordService,
+    ITokenService tokenService,
     TimeProvider timeProvider)
     : IIdentityService
 {
@@ -40,15 +42,18 @@ public sealed class IdentityService(
         return UserStatus.Registered;
     }
 
-    public async Task<UserStatus> LoginUserAsync(string email, string password)
+    public async Task<LoginResponse> LoginUserAsync(string email, string password)
     {
         var userCredentials = await credentialsRepository.GetByEmailAsync(email);
 
         if (userCredentials == null || !passwordService.VerifyPassword(password, userCredentials.PasswordHash, userCredentials.Salt))
         {
-            return UserStatus.LoginFailed;
+            throw new UnauthorizedAccessException("Invalid email or password.");
         }
 
+        var accessToken = tokenService.GenerateAccessToken(userCredentials.Id);
+        var refreshToken = tokenService.GenerateRefreshToken();
 
+        return new LoginResponse(accessToken, refreshToken);
     }
 }

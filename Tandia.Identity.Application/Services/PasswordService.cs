@@ -15,14 +15,13 @@ public sealed class PasswordService : IPasswordService
 
         var hash = HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
 
-        return (Convert.ToBase64String(salt), Convert.ToBase64String(hash));
+        return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
     }
 
     public bool VerifyPassword(string password, string hashedPassword, string salt)
     {
-        return HashPasswordWithSalt(
-            Encoding.UTF8.GetBytes(password),
-            Encoding.UTF8.GetBytes(salt)) == Encoding.UTF8.GetBytes(hashedPassword);
+        var temp = Convert.ToBase64String(HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), Convert.FromBase64String(salt)));
+        return temp == hashedPassword;
     }
 
     private static byte[] HashPasswordWithSalt(byte[] passwordBytes, byte[] salt)
