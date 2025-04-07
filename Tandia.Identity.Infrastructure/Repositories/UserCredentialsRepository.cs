@@ -4,7 +4,7 @@ using Tandia.Identity.Infrastructure.Models;
 
 namespace Tandia.Identity.Infrastructure.Repositories;
 
-public sealed class UserCredentialsRepository(string connectString) : IRepository<UserCredentialsEntity>, IRefreshTokenRepository
+public sealed class UserCredentialsRepository(string connectString) : IRepository<UserCredentialsEntity>
 {
     private readonly string _connectionString = connectString;
 

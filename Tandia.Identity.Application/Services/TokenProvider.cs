@@ -8,9 +8,9 @@ using Tandia.Identity.Application.Services.Interfaces;
 
 namespace Tandia.Identity.Application.Services;
 
-public sealed class TokenService(
+public sealed class TokenProvider(
     IOptions<JwtOptions> jwtSettings)
-    : ITokenService
+    : ITokenProvider
 {
     public string GenerateAccessToken(Guid userId)
     {

@@ -1,6 +1,6 @@
 namespace Tandia.Identity.Application.Services.Interfaces;
 
-public interface ITokenService
+public interface ITokenProvider
 {
     string GenerateAccessToken(Guid userId);
 

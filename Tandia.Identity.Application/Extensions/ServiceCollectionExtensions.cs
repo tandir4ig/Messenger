@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IRepository<UserEntity>>(provider => new UserRepository(connectionString));
         services.AddScoped<IRepository<UserCredentialsEntity>>(provider => new UserCredentialsRepository(connectionString));
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IIdentityService, IdentityService>();
 

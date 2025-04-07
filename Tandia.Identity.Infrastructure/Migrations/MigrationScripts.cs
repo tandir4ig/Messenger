@@ -14,5 +14,13 @@ public static class MigrationScripts
         ""PasswordHash"" VARCHAR(255) NOT NULL,
         ""Salt"" VARCHAR(255) NOT NULL,
         FOREIGN KEY (""Id"") REFERENCES ""Users""(""Id"")
+    );
+
+    CREATE TABLE IF NOT EXISTS ""RefreshTokens"" (
+        ""Id"" UUID PRIMARY KEY,
+        ""UserId"" UUID NOT NULL,
+        ""Token"" VARCHAR(255) NOT NULL,
+        ""ExpiryDate"" TIMESTAMP NOT NULL,
+        FOREIGN KEY (""UserId"") REFERENCES ""Users""(""Id"") ON DELETE CASCADE
     );";
 }

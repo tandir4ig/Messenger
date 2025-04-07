@@ -11,7 +11,7 @@ public sealed class IdentityService(
     IRepository<UserEntity> userRepository,
     IRepository<UserCredentialsEntity> credentialsRepository,
     IPasswordService passwordService,
-    ITokenService tokenService,
+    ITokenProvider tokenProvider,
     TimeProvider timeProvider)
     : IIdentityService
 {
@@ -33,8 +33,7 @@ public sealed class IdentityService(
             userId,
             email,
             hashedPassword,
-            salt,
-            refreshToken: null);
+            salt);
 
         // Сохранение в базе данных
         await userRepository.AddAsync(userEntity);
@@ -52,8 +51,8 @@ public sealed class IdentityService(
             throw new UnauthorizedAccessException("Invalid email or password.");
         }
 
-        var accessToken = tokenService.GenerateAccessToken(userCredentials.Id);
-        var refreshToken = tokenService.GenerateRefreshToken();
+        var accessToken = tokenProvider.GenerateAccessToken(userCredentials.Id);
+        var refreshToken = tokenProvider.GenerateRefreshToken();
 
         return new LoginResponse(accessToken, refreshToken);
     }
