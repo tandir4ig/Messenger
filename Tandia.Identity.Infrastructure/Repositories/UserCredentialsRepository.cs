@@ -4,7 +4,7 @@ using Tandia.Identity.Infrastructure.Models;
 
 namespace Tandia.Identity.Infrastructure.Repositories;
 
-public sealed class UserCredentialsRepository(string connectString) : IRepository<UserCredentialsEntity>
+public sealed class UserCredentialsRepository(string connectString) : IRepository<UserCredentialsEntity>, IRefreshTokenRepository
 {
     private readonly string _connectionString = connectString;
 
@@ -41,7 +41,8 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await using var connection = new NpgsqlConnection(_connectionString);
 
         await connection.ExecuteAsync(
-            "INSERT INTO \"UserCredentials\" (\"Id\", \"Email\", \"PasswordHash\", \"Salt\") VALUES (@Id, @Email, @PasswordHash, @Salt)",
+            "INSERT INTO \"UserCredentials\" (\"Id\", \"Email\", \"PasswordHash\", \"Salt\", \"RefreshToken\") " +
+            "VALUES (@Id, @Email, @PasswordHash, @Salt, @RefreshToken)",
             userCredentials);
     }
 
@@ -50,7 +51,9 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await using var connection = new NpgsqlConnection(_connectionString);
 
         await connection.ExecuteAsync(
-            "UPDATE \"UserCredentials\" SET \"Email\" = @Email, \"PasswordHash\" = @PasswordHash, \"Salt\" = @Salt WHERE \"Id\" = @Id",
+            "UPDATE \"UserCredentials\" " +
+            "SET \"Email\" = @Email, \"PasswordHash\" = @PasswordHash, \"Salt\" = @Salt, \"RefreshToken\" = @RefreshToken  " +
+            "WHERE \"Id\" = @Id",
             userCredentials);
     }
 
@@ -59,7 +62,18 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await using var connection = new NpgsqlConnection(_connectionString);
 
         await connection.ExecuteAsync(
-            "DELETE FROM \"UserCredentials\" WHERE \"Id\" = @Id",
+            "DELETE FROM \"UserCredentials\" " +
+            "WHERE \"Id\" = @Id",
             new { Id = id });
+    }
+
+    public async Task UpdateRefreshTokenAsync(Guid id, string refreshToken)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        await connection.ExecuteAsync(
+            "UPDATE \"UserCredentials\" " +
+            "SET \"RefreshToken\" = @RefreshToken " +
+            "WHERE \"Id\" = @Id",
+            new { Id = id, RefreshToken = refreshToken });
     }
 }

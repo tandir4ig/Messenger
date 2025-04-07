@@ -33,7 +33,8 @@ public sealed class IdentityService(
             userId,
             email,
             hashedPassword,
-            salt);
+            salt,
+            refreshToken: null);
 
         // Сохранение в базе данных
         await userRepository.AddAsync(userEntity);
