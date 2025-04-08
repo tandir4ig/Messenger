@@ -6,7 +6,7 @@ using Tandia.Identity.WebApi.OptionsSetup;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 builder.Services.AddIdentityServices(
     builder.Configuration.GetConnectionString(

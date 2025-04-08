@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tandia.Identity.Application.Enums;
 using Tandia.Identity.Application.Services.Interfaces;
 using Tandia.Identity.WebApi.DTOs.Requests;
+using Tandia.Identity.WebApi.DTOs.Responses;
 
 namespace Tandia.Identity.WebApi.Controllers;
 
@@ -34,11 +35,35 @@ public sealed class AuthController(IIdentityService identityService) : Controlle
         try
         {
             var loginResponse = await identityService.LoginUserAsync(request.Email, request.Password);
-            return Ok(loginResponse);
+            var loginResponseDto = new LoginResponse(loginResponse.AccessToken, loginResponse.RefreshToken);
+            return Ok(loginResponseDto);
         }
         catch (UnauthorizedAccessException)
         {
             return Unauthorized(); // Возвращает 401 Unauthorized
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.RefreshToken))
+        {
+            return BadRequest("Refresh token is required.");
+        }
+
+        try
+        {
+            var loginResponse = await identityService.RefreshTokenAsync(request.RefreshToken);
+            return Ok(new LoginResponse(loginResponse.AccessToken, loginResponse.RefreshToken));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized(); // Возвращает 401 Unauthorized, если refresh token недействителен
         }
         catch (Exception)
         {

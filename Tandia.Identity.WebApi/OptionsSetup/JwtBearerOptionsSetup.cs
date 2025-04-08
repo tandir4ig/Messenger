@@ -6,7 +6,7 @@ using Tandia.Identity.Application.Models;
 
 namespace Tandia.Identity.WebApi.OptionsSetup;
 
-public sealed class JwtBearerOptionsSetup(IOptions<JwtOptions> jwtOptions) : IConfigureOptions<JwtBearerOptions>
+public sealed class JwtBearerOptionsSetup(IOptions<JwtSettings> jwtOptions) : IConfigureOptions<JwtBearerOptions>
 {
     public void Configure(JwtBearerOptions options)
     {

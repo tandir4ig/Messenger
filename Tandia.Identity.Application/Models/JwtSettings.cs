@@ -1,6 +1,6 @@
 namespace Tandia.Identity.Application.Models;
 
-public sealed class JwtOptions
+public sealed class JwtSettings
 {
     public required string SecretKey { get; init; }
 

@@ -1,4 +1,5 @@
 using Tandia.Identity.Application.Enums;
+using Tandia.Identity.Application.Models;
 using Tandia.Identity.Application.Models.Responses;
 using Tandia.Identity.Application.Services.Interfaces;
 using Tandia.Identity.Infrastructure.Models;
@@ -10,6 +11,7 @@ public sealed class IdentityService(
 
     IRepository<UserEntity> userRepository,
     IRepository<UserCredentialsEntity> credentialsRepository,
+    IRefreshTokenRepository refreshTokenRepository,
     IPasswordService passwordService,
     ITokenProvider tokenProvider,
     TimeProvider timeProvider)
@@ -17,6 +19,11 @@ public sealed class IdentityService(
 {
     public async Task<UserStatus> RegisterUserAsync(string email, string password)
     {
+        if (await credentialsRepository.GetByEmailAsync(email) != null)
+        {
+            return UserStatus.LoginFailed;
+        }
+
         var userId = Guid.NewGuid();
         var registrationDate = timeProvider.GetUtcNow();
 
@@ -52,8 +59,51 @@ public sealed class IdentityService(
         }
 
         var accessToken = tokenProvider.GenerateAccessToken(userCredentials.Id);
-        var refreshToken = tokenProvider.GenerateRefreshToken();
+        var refreshToken = new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            Token = tokenProvider.GenerateRefreshToken(),
+            ExpiryDate = timeProvider.GetUtcNow().AddDays(7),
+            UserId = userCredentials.Id,
+        };
 
-        return new LoginResponse(accessToken, refreshToken);
+        await refreshTokenRepository.AddAsync(new RefreshTokenEntity(
+            refreshToken.Id,
+            refreshToken.UserId,
+            refreshToken.Token,
+            refreshToken.ExpiryDate));
+
+        return new LoginResponse(accessToken, refreshToken.Token);
+    }
+
+    public async Task<LoginResponse> RefreshTokenAsync(string refreshToken)
+    {
+        var refreshTokenEntity = await refreshTokenRepository.GetTokenAsync(refreshToken);
+
+        if (refreshTokenEntity == null || refreshTokenEntity.ExpiryDate < timeProvider.GetUtcNow())
+        {
+            throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+        }
+
+        // Генерация нового access токена
+        var newAccessToken = tokenProvider.GenerateAccessToken(refreshTokenEntity.UserId);
+
+        // Генерация нового refresh токена
+        var newRefreshToken = new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            Token = tokenProvider.GenerateRefreshToken(),
+            ExpiryDate = timeProvider.GetUtcNow().AddDays(7),
+            UserId = refreshTokenEntity.UserId,
+        };
+
+        // Сохранение нового refresh токена в базу данных
+        await refreshTokenRepository.AddAsync(new RefreshTokenEntity(
+            newRefreshToken.Id,
+            newRefreshToken.UserId,
+            newRefreshToken.Token,
+            newRefreshToken.ExpiryDate));
+
+        return new LoginResponse(newAccessToken, newRefreshToken.Token);
     }
 }

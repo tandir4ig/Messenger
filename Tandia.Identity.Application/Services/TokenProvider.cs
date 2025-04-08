@@ -9,7 +9,7 @@ using Tandia.Identity.Application.Services.Interfaces;
 namespace Tandia.Identity.Application.Services;
 
 public sealed class TokenProvider(
-    IOptions<JwtOptions> jwtSettings)
+    IOptions<JwtSettings> jwtSettings)
     : ITokenProvider
 {
     public string GenerateAccessToken(Guid userId)

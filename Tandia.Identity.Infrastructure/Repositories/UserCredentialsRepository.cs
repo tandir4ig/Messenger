@@ -41,8 +41,8 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await using var connection = new NpgsqlConnection(_connectionString);
 
         await connection.ExecuteAsync(
-            "INSERT INTO \"UserCredentials\" (\"Id\", \"Email\", \"PasswordHash\", \"Salt\", \"RefreshToken\") " +
-            "VALUES (@Id, @Email, @PasswordHash, @Salt, @RefreshToken)",
+            "INSERT INTO \"UserCredentials\" (\"Id\", \"Email\", \"PasswordHash\", \"Salt\") " +
+            "VALUES (@Id, @Email, @PasswordHash, @Salt)",
             userCredentials);
     }
 
