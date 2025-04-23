@@ -13,7 +13,9 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await using var connection = new NpgsqlConnection(_connectionString);
 
         return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(
-            "SELECT * FROM \"UserCredentials\" WHERE \"Id\" = @Id",
+            "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
+            "FROM \"UserCredentials\" " +
+            "WHERE \"Id\" = @Id",
             new { Id = id });
     }
 
@@ -22,7 +24,9 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await using var connection = new NpgsqlConnection(_connectionString);
 
         return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(
-            "SELECT * FROM \"UserCredentials\" WHERE \"Email\" = @Email",
+            "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
+            "FROM \"UserCredentials\" " +
+            "WHERE \"Email\" = @Email",
             new { Email = email });
     }
 
@@ -31,7 +35,8 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await using var connection = new NpgsqlConnection(_connectionString);
 
         var result = await connection.QueryAsync<UserCredentialsEntity>(
-            "SELECT * FROM \"UserCredentials\"");
+            "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
+            "FROM \"UserCredentials\"");
 
         return result.ToList().AsReadOnly();
     }
@@ -43,7 +48,7 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
         await connection.ExecuteAsync(
             "INSERT INTO \"UserCredentials\" (\"Id\", \"Email\", \"PasswordHash\", \"Salt\") " +
             "VALUES (@Id, @Email, @PasswordHash, @Salt)",
-            userCredentials);
+            new { userCredentials.Id, userCredentials.Email, userCredentials.PasswordHash, userCredentials.Salt });
     }
 
     public async Task UpdateAsync(UserCredentialsEntity userCredentials)

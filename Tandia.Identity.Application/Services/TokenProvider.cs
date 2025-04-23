@@ -9,7 +9,8 @@ using Tandia.Identity.Application.Services.Interfaces;
 namespace Tandia.Identity.Application.Services;
 
 public sealed class TokenProvider(
-    IOptions<JwtSettings> jwtSettings)
+    IOptions<JwtSettings> jwtSettings,
+    TimeProvider timeProvider)
     : ITokenProvider
 {
     public string GenerateAccessToken(Guid userId)
@@ -29,7 +30,7 @@ public sealed class TokenProvider(
             issuer: jwtSettings.Value.Issuer,
             audience: jwtSettings.Value.Audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(jwtSettings.Value.TokenLifetime),
+            expires: timeProvider.GetUtcNow().AddMinutes(jwtSettings.Value.TokenLifetime).DateTime,
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

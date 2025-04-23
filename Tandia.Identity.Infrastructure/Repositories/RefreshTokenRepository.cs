@@ -12,7 +12,7 @@ public sealed class RefreshTokenRepository(string connectionString) : IRefreshTo
 
         await connection.ExecuteAsync(
             "INSERT INTO \"RefreshTokens\" (\"Id\", \"UserId\", \"Token\", \"ExpiryDate\") VALUES (@Id, @UserId, @Token, @ExpiryDate)",
-            refreshToken);
+            new { refreshToken.Id, refreshToken.UserId, refreshToken.Token, refreshToken.ExpiryDate });
     }
 
     public async Task<RefreshTokenEntity?> GetTokenAsync(string refreshToken)

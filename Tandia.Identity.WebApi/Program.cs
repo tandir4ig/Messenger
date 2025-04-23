@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Tandia.Identity.Application.Models;
 using Tandia.Identity.WebApi.Extensions;
+using Tandia.Identity.WebApi.Middleware;
 using Tandia.Identity.WebApi.OptionsSetup;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 builder.Services.AddIdentityServices(
     builder.Configuration.GetConnectionString(
-        "DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."),
-    builder.Configuration.GetSection("JwtSettings").Bind);
+        "DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
 
 builder.Services.AddControllers();
 
@@ -28,6 +26,8 @@ builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
