@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0" PrivateAssets="all" />
 		<PackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445" PrivateAssets="all" />
 		<PackageReference Include="Roslynator.Analyzers" Version="4.13.1" PrivateAssets="all" />
 		<PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.13.1" PrivateAssets="all" />

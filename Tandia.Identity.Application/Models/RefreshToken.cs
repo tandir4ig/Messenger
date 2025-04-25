@@ -9,4 +9,6 @@ public sealed class RefreshToken
     public required string Token { get; init; }
 
     public required DateTimeOffset ExpiryDate { get; init; }
+
+    public required bool IsValid { get; init; }
 }

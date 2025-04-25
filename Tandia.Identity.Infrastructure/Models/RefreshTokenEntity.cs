@@ -1,6 +1,6 @@
 namespace Tandia.Identity.Infrastructure.Models;
 
-public sealed class RefreshTokenEntity(Guid id, Guid userId, string token, DateTimeOffset expiryDate)
+public sealed class RefreshTokenEntity(Guid id, Guid userId, string token, DateTimeOffset expiryDate, bool isValid)
 {
     public Guid Id { get; } = id;
 
@@ -9,4 +9,6 @@ public sealed class RefreshTokenEntity(Guid id, Guid userId, string token, DateT
     public string Token { get; } = token;
 
     public DateTimeOffset ExpiryDate { get; } = expiryDate;
+
+    public bool IsValid { get; } = isValid;
 }

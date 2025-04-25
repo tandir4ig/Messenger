@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using Tandia.Identity.Application.Enums;
 using Tandia.Identity.Application.Models;
 using Tandia.Identity.Application.Models.Responses;
@@ -65,28 +66,32 @@ public sealed class IdentityService(
             Token = tokenProvider.GenerateRefreshToken(),
             ExpiryDate = timeProvider.GetUtcNow().AddDays(7),
             UserId = userCredentials.Id,
+            IsValid = true,
         };
 
         await refreshTokenRepository.AddAsync(new RefreshTokenEntity(
             refreshToken.Id,
             refreshToken.UserId,
             refreshToken.Token,
-            refreshToken.ExpiryDate));
+            refreshToken.ExpiryDate,
+            refreshToken.IsValid));
 
         return new LoginResponse(accessToken, refreshToken.Token);
     }
 
-    public async Task<LoginResponse> RefreshTokenAsync(string refreshToken)
+    public async Task<Result<LoginResponse>> RefreshTokenAsync(string refreshToken)
     {
         var refreshTokenEntity = await refreshTokenRepository.GetTokenAsync(refreshToken);
 
-        if (refreshTokenEntity == null || refreshTokenEntity.ExpiryDate < timeProvider.GetUtcNow())
+        if (refreshTokenEntity.IsFailure)
         {
-            throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+            return Result.Failure<LoginResponse>("Refresh-токен недействителен или истёк.");
         }
 
+        await refreshTokenRepository.InvalidateTokenAsync(refreshToken);
+
         // Генерация нового access токена
-        var newAccessToken = tokenProvider.GenerateAccessToken(refreshTokenEntity.UserId);
+        var newAccessToken = tokenProvider.GenerateAccessToken(refreshTokenEntity.Value.UserId);
 
         // Генерация нового refresh токена
         var newRefreshToken = new RefreshToken
@@ -94,7 +99,8 @@ public sealed class IdentityService(
             Id = Guid.NewGuid(),
             Token = tokenProvider.GenerateRefreshToken(),
             ExpiryDate = timeProvider.GetUtcNow().AddDays(7),
-            UserId = refreshTokenEntity.UserId,
+            UserId = refreshTokenEntity.Value.UserId,
+            IsValid = true,
         };
 
         // Сохранение нового refresh токена в базу данных
@@ -102,7 +108,8 @@ public sealed class IdentityService(
             newRefreshToken.Id,
             newRefreshToken.UserId,
             newRefreshToken.Token,
-            newRefreshToken.ExpiryDate));
+            newRefreshToken.ExpiryDate,
+            newRefreshToken.IsValid));
 
         return new LoginResponse(newAccessToken, newRefreshToken.Token);
     }

@@ -21,6 +21,7 @@ public static class MigrationScripts
         ""UserId"" UUID NOT NULL,
         ""Token"" VARCHAR(255) NOT NULL,
         ""ExpiryDate"" TIMESTAMP NOT NULL,
+        ""IsValid"" BOOLEAN NOT NULL,
         FOREIGN KEY (""UserId"") REFERENCES ""Users""(""Id"") ON DELETE CASCADE
     );";
 }
