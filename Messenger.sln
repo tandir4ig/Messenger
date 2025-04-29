@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandia.Identity.Infrastruct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandia.Identity.WebApi", "Tandia.Identity.WebApi\Tandia.Identity.WebApi.csproj", "{6589084F-0BF7-4A5F-8275-E441AC172203}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandia.Identity.ComponentTests", "Tandia.Identity.ComponentTests\Tandia.Identity.ComponentTests.csproj", "{5DC46265-FA93-481E-990A-47FF437FBA73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{6589084F-0BF7-4A5F-8275-E441AC172203}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6589084F-0BF7-4A5F-8275-E441AC172203}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6589084F-0BF7-4A5F-8275-E441AC172203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DC46265-FA93-481E-990A-47FF437FBA73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DC46265-FA93-481E-990A-47FF437FBA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DC46265-FA93-481E-990A-47FF437FBA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DC46265-FA93-481E-990A-47FF437FBA73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{118E13D5-EB81-4D54-968C-AEF6FE7562D9} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{9C668F5C-B3EA-414C-949E-BEA88F1B5F0C} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{6589084F-0BF7-4A5F-8275-E441AC172203} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{5DC46265-FA93-481E-990A-47FF437FBA73} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E25415A5-C165-4DAD-A8A4-BCBC0872726F}

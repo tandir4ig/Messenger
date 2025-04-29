@@ -4,13 +4,11 @@ using Tandia.Identity.Infrastructure.Models;
 
 namespace Tandia.Identity.Infrastructure.Repositories;
 
-public sealed class UserCredentialsRepository(string connectString) : IRepository<UserCredentialsEntity>
+public sealed class UserCredentialsRepository(string connectionString) : IRepository<UserCredentialsEntity>
 {
-    private readonly string _connectionString = connectString;
-
     public async Task<UserCredentialsEntity?> GetByIdAsync(Guid id)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
         return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(
             "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
@@ -21,7 +19,7 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
 
     public async Task<UserCredentialsEntity?> GetByEmailAsync(string email)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
         return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(
             "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
@@ -32,7 +30,7 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
 
     public async Task<IReadOnlyCollection<UserCredentialsEntity>> GetAllAsync()
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
         var result = await connection.QueryAsync<UserCredentialsEntity>(
             "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
@@ -43,7 +41,7 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
 
     public async Task AddAsync(UserCredentialsEntity userCredentials)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
         await connection.ExecuteAsync(
             "INSERT INTO \"UserCredentials\" (\"Id\", \"Email\", \"PasswordHash\", \"Salt\") " +
@@ -53,7 +51,7 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
 
     public async Task UpdateAsync(UserCredentialsEntity userCredentials)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
         await connection.ExecuteAsync(
             "UPDATE \"UserCredentials\" " +
@@ -64,7 +62,7 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
 
     public async Task DeleteAsync(Guid id)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
         await connection.ExecuteAsync(
             "DELETE FROM \"UserCredentials\" " +
@@ -74,7 +72,7 @@ public sealed class UserCredentialsRepository(string connectString) : IRepositor
 
     public async Task UpdateRefreshTokenAsync(Guid id, string refreshToken)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        using var connection = new NpgsqlConnection(connectionString);
         await connection.ExecuteAsync(
             "UPDATE \"UserCredentials\" " +
             "SET \"RefreshToken\" = @RefreshToken " +

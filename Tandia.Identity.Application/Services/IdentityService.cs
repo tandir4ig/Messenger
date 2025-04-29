@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using Tandia.Identity.Application.Enums;
 using Tandia.Identity.Application.Models;
 using Tandia.Identity.Application.Models.Responses;
 using Tandia.Identity.Application.Services.Interfaces;
@@ -18,11 +17,11 @@ public sealed class IdentityService(
     TimeProvider timeProvider)
     : IIdentityService
 {
-    public async Task<UserStatus> RegisterUserAsync(string email, string password)
+    public async Task<Result> RegisterUserAsync(string email, string password)
     {
         if (await credentialsRepository.GetByEmailAsync(email) != null)
         {
-            return UserStatus.LoginFailed;
+            return Result.Failure("Пользователь с таким Email уже существует");
         }
 
         var userId = Guid.NewGuid();
@@ -47,16 +46,21 @@ public sealed class IdentityService(
         await userRepository.AddAsync(userEntity);
         await credentialsRepository.AddAsync(credentialsEntity);
 
-        return UserStatus.Registered;
+        return Result.Success();
     }
 
-    public async Task<LoginResponse> LoginUserAsync(string email, string password)
+    public async Task<Result<LoginResponse>> LoginUserAsync(string email, string password)
     {
         var userCredentials = await credentialsRepository.GetByEmailAsync(email);
 
-        if (userCredentials == null || !passwordService.VerifyPassword(password, userCredentials.PasswordHash, userCredentials.Salt))
+        if (userCredentials == null)
         {
-            throw new UnauthorizedAccessException("Invalid email or password.");
+            return Result.Failure<LoginResponse>("Пользователь с таким email не найден.");
+        }
+
+        if (!passwordService.VerifyPassword(password, userCredentials.PasswordHash, userCredentials.Salt))
+        {
+            return Result.Failure<LoginResponse>("Неверный пароль.");
         }
 
         var accessToken = tokenProvider.GenerateAccessToken(userCredentials.Id);
@@ -76,34 +80,30 @@ public sealed class IdentityService(
             refreshToken.ExpiryDate,
             refreshToken.IsValid));
 
-        return new LoginResponse(accessToken, refreshToken.Token);
+        return Result.Success(new LoginResponse(accessToken, refreshToken.Token));
     }
 
     public async Task<Result<LoginResponse>> RefreshTokenAsync(string refreshToken)
     {
         var refreshTokenEntity = await refreshTokenRepository.GetTokenAsync(refreshToken);
 
-        if (refreshTokenEntity.IsFailure)
+        if (refreshTokenEntity == null)
         {
             return Result.Failure<LoginResponse>("Refresh-токен недействителен или истёк.");
         }
 
-        await refreshTokenRepository.InvalidateTokenAsync(refreshToken);
-
-        // Генерация нового access токена
-        var newAccessToken = tokenProvider.GenerateAccessToken(refreshTokenEntity.Value.UserId);
-
-        // Генерация нового refresh токена
+        var newAccessToken = tokenProvider.GenerateAccessToken(refreshTokenEntity.UserId);
         var newRefreshToken = new RefreshToken
         {
             Id = Guid.NewGuid(),
             Token = tokenProvider.GenerateRefreshToken(),
             ExpiryDate = timeProvider.GetUtcNow().AddDays(7),
-            UserId = refreshTokenEntity.Value.UserId,
+            UserId = refreshTokenEntity.UserId,
             IsValid = true,
         };
 
-        // Сохранение нового refresh токена в базу данных
+        await refreshTokenRepository.InvalidateTokenAsync(refreshToken);
+
         await refreshTokenRepository.AddAsync(new RefreshTokenEntity(
             newRefreshToken.Id,
             newRefreshToken.UserId,
@@ -111,6 +111,6 @@ public sealed class IdentityService(
             newRefreshToken.ExpiryDate,
             newRefreshToken.IsValid));
 
-        return new LoginResponse(newAccessToken, newRefreshToken.Token);
+        return Result.Success(new LoginResponse(newAccessToken, newRefreshToken.Token));
     }
 }
