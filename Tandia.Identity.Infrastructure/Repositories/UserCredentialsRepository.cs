@@ -1,11 +1,14 @@
 using Dapper;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using Tandia.Identity.Infrastructure.Models;
 
 namespace Tandia.Identity.Infrastructure.Repositories;
 
-public sealed class UserCredentialsRepository(string connectionString) : IRepository<UserCredentialsEntity>
+public sealed class UserCredentialsRepository(IOptions<DatabaseOptions> databaseOptions) : IRepository<UserCredentialsEntity>
 {
+    private readonly string connectionString = databaseOptions.Value.DefaultConnection;
+
     public async Task<UserCredentialsEntity?> GetByIdAsync(Guid id)
     {
         await using var connection = new NpgsqlConnection(connectionString);

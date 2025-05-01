@@ -1,11 +1,14 @@
 using Dapper;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using Tandia.Identity.Infrastructure.Models;
 
 namespace Tandia.Identity.Infrastructure.Repositories;
 
-public sealed class RefreshTokenRepository(string connectionString) : IRefreshTokenRepository
+public sealed class RefreshTokenRepository(IOptions<DatabaseOptions> databaseOptions) : IRefreshTokenRepository
 {
+    private readonly string connectionString = databaseOptions.Value.DefaultConnection;
+
     public async Task AddAsync(RefreshTokenEntity refreshToken)
     {
             await using var connection = new NpgsqlConnection(connectionString);

@@ -87,7 +87,7 @@ public sealed class IdentityService(
     {
         var refreshTokenEntity = await refreshTokenRepository.GetTokenAsync(refreshToken);
 
-        if (refreshTokenEntity == null)
+        if (refreshTokenEntity == null || !refreshTokenEntity.IsValid || refreshTokenEntity.ExpiryDate < timeProvider.GetUtcNow())
         {
             return Result.Failure<LoginResponse>("Refresh-токен недействителен или истёк.");
         }

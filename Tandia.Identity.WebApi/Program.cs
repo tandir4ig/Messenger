@@ -7,9 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddIdentityServices(
-    builder.Configuration.GetConnectionString(
-        "DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
+builder.Services.AddIdentityServices();
 
 builder.Services.AddControllers();
 
@@ -22,6 +20,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
 
 var app = builder.Build();
 

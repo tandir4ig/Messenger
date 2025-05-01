@@ -1,10 +1,11 @@
 using Dapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
 using Tandia.Identity.Infrastructure.Migrations;
+using Tandia.Identity.Infrastructure.Models;
 using Testcontainers.PostgreSql;
 
 namespace Tandia.Identity.ComponentTests;
@@ -18,12 +19,9 @@ public sealed class IdentityIntegrationTestWebFactory : WebApplicationFactory<We
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureAppConfiguration((_, cfg) =>
+        builder.ConfigureServices(services =>
         {
-            cfg.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ConnectionStrings:DefaultConnection"] = ConnectionString,
-            });
+            services.Configure<DatabaseOptions>(opt => opt.DefaultConnection = ConnectionString);
         });
     }
 
@@ -51,5 +49,10 @@ public sealed class IdentityIntegrationTestWebFactory : WebApplicationFactory<We
 
     public new async Task DisposeAsync() => await _container.DisposeAsync();
 
-    public Task ResetDatabaseAsync() => _respawner.ResetAsync(ConnectionString);
+    public async Task ResetDbAsync()
+    {
+        await using var resetConn = new NpgsqlConnection(ConnectionString);
+        await resetConn.OpenAsync();
+        await _respawner.ResetAsync(resetConn);
+    }
 }

@@ -9,13 +9,12 @@ namespace Tandia.Identity.Application.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddUsers(
-        this IServiceCollection services,
-        string connectionString)
+        this IServiceCollection services)
     {
         services.AddSingleton(TimeProvider.System);
-        services.AddScoped<IRepository<UserEntity>>(_ => new UserRepository(connectionString));
-        services.AddScoped<IRepository<UserCredentialsEntity>>(_ => new UserCredentialsRepository(connectionString));
-        services.AddScoped<IRefreshTokenRepository>(_ => new RefreshTokenRepository(connectionString));
+        services.AddScoped<IRepository<UserEntity>, UserRepository>();
+        services.AddScoped<IRepository<UserCredentialsEntity>, UserCredentialsRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IIdentityService, IdentityService>();
