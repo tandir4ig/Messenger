@@ -8,5 +8,5 @@ public interface IRefreshTokenRepository
 
     Task<RefreshTokenEntity?> GetTokenAsync(string refreshToken);
 
-    Task InvalidateTokenAsync(string refreshToken);
+    Task DeleteAsync(string refreshToken);
 }

@@ -9,8 +9,8 @@ namespace Tandia.Identity.Application.Services;
 
 public sealed class IdentityService(
 
-    IRepository<UserEntity> userRepository,
-    IRepository<UserCredentialsEntity> credentialsRepository,
+    IUserRepository userRepository,
+    IUserCredentialsRepository credentialsRepository,
     IRefreshTokenRepository refreshTokenRepository,
     IPasswordService passwordService,
     ITokenProvider tokenProvider,
@@ -70,15 +70,13 @@ public sealed class IdentityService(
             Token = tokenProvider.GenerateRefreshToken(),
             ExpiryDate = timeProvider.GetUtcNow().AddDays(7),
             UserId = userCredentials.Id,
-            IsValid = true,
         };
 
         await refreshTokenRepository.AddAsync(new RefreshTokenEntity(
             refreshToken.Id,
             refreshToken.UserId,
             refreshToken.Token,
-            refreshToken.ExpiryDate,
-            refreshToken.IsValid));
+            refreshToken.ExpiryDate));
 
         return Result.Success(new LoginResponse(accessToken, refreshToken.Token));
     }
@@ -87,7 +85,7 @@ public sealed class IdentityService(
     {
         var refreshTokenEntity = await refreshTokenRepository.GetTokenAsync(refreshToken);
 
-        if (refreshTokenEntity == null || !refreshTokenEntity.IsValid || refreshTokenEntity.ExpiryDate < timeProvider.GetUtcNow())
+        if (refreshTokenEntity == null || refreshTokenEntity.ExpiryDate < timeProvider.GetUtcNow())
         {
             return Result.Failure<LoginResponse>("Refresh-токен недействителен или истёк.");
         }
@@ -99,17 +97,15 @@ public sealed class IdentityService(
             Token = tokenProvider.GenerateRefreshToken(),
             ExpiryDate = timeProvider.GetUtcNow().AddDays(7),
             UserId = refreshTokenEntity.UserId,
-            IsValid = true,
         };
 
-        await refreshTokenRepository.InvalidateTokenAsync(refreshToken);
+        await refreshTokenRepository.DeleteAsync(refreshToken);
 
         await refreshTokenRepository.AddAsync(new RefreshTokenEntity(
             newRefreshToken.Id,
             newRefreshToken.UserId,
             newRefreshToken.Token,
-            newRefreshToken.ExpiryDate,
-            newRefreshToken.IsValid));
+            newRefreshToken.ExpiryDate));
 
         return Result.Success(new LoginResponse(newAccessToken, newRefreshToken.Token));
     }

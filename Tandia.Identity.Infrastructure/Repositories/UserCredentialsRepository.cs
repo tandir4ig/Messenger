@@ -5,39 +5,46 @@ using Tandia.Identity.Infrastructure.Models;
 
 namespace Tandia.Identity.Infrastructure.Repositories;
 
-public sealed class UserCredentialsRepository(IOptions<DatabaseOptions> databaseOptions) : IRepository<UserCredentialsEntity>
+public sealed class UserCredentialsRepository(IOptions<DatabaseOptions> databaseOptions) : IUserCredentialsRepository
 {
-    private readonly string connectionString = databaseOptions.Value.DefaultConnection;
+    private readonly string connectionString = databaseOptions.Value.ConnectionString;
 
     public async Task<UserCredentialsEntity?> GetByIdAsync(Guid id)
     {
         await using var connection = new NpgsqlConnection(connectionString);
 
-        return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(
-            "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
-            "FROM \"UserCredentials\" " +
-            "WHERE \"Id\" = @Id",
-            new { Id = id });
+        const string Sql = """
+            SELECT  "Id", "Email", "PasswordHash", "Salt"
+            FROM    "UserCredentials"
+            WHERE   "Id" = @Id;
+            """;
+
+        return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(Sql, new { Id = id });
     }
 
     public async Task<UserCredentialsEntity?> GetByEmailAsync(string email)
     {
         await using var connection = new NpgsqlConnection(connectionString);
 
-        return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(
-            "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
-            "FROM \"UserCredentials\" " +
-            "WHERE \"Email\" = @Email",
-            new { Email = email });
+        const string Sql = """
+            SELECT  "Id", "Email", "PasswordHash", "Salt"
+            FROM    "UserCredentials"
+            WHERE   "Email" = @Email;
+            """;
+
+        return await connection.QuerySingleOrDefaultAsync<UserCredentialsEntity>(Sql, new { Email = email });
     }
 
     public async Task<IReadOnlyCollection<UserCredentialsEntity>> GetAllAsync()
     {
         await using var connection = new NpgsqlConnection(connectionString);
 
-        var result = await connection.QueryAsync<UserCredentialsEntity>(
-            "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Salt\" " +
-            "FROM \"UserCredentials\"");
+        const string Sql = """
+            SELECT  "Id", "Email", "PasswordHash", "Salt"
+            FROM    "UserCredentials";
+            """;
+
+        var result = await connection.QueryAsync<UserCredentialsEntity>(Sql);
 
         return result.ToList().AsReadOnly();
     }
@@ -46,40 +53,44 @@ public sealed class UserCredentialsRepository(IOptions<DatabaseOptions> database
     {
         await using var connection = new NpgsqlConnection(connectionString);
 
-        await connection.ExecuteAsync(
-            "INSERT INTO \"UserCredentials\" (\"Id\", \"Email\", \"PasswordHash\", \"Salt\") " +
-            "VALUES (@Id, @Email, @PasswordHash, @Salt)",
-            new { userCredentials.Id, userCredentials.Email, userCredentials.PasswordHash, userCredentials.Salt });
+        const string Sql = """
+            INSERT INTO "UserCredentials" ("Id", "Email", "PasswordHash", "Salt")
+            VALUES (@Id, @Email, @PasswordHash, @Salt);
+            """;
+
+        await connection.ExecuteAsync(Sql, new
+        {
+            userCredentials.Id,
+            userCredentials.Email,
+            userCredentials.PasswordHash,
+            userCredentials.Salt,
+        });
     }
 
     public async Task UpdateAsync(UserCredentialsEntity userCredentials)
     {
         await using var connection = new NpgsqlConnection(connectionString);
 
-        await connection.ExecuteAsync(
-            "UPDATE \"UserCredentials\" " +
-            "SET \"Email\" = @Email, \"PasswordHash\" = @PasswordHash, \"Salt\" = @Salt, \"RefreshToken\" = @RefreshToken  " +
-            "WHERE \"Id\" = @Id",
-            userCredentials);
+        const string Sql = """
+            UPDATE "UserCredentials"
+            SET    "Email"        = @Email,
+                   "PasswordHash" = @PasswordHash,
+                   "Salt"         = @Salt
+            WHERE  "Id"           = @Id;
+            """;
+
+        await connection.ExecuteAsync(Sql, userCredentials);
     }
 
     public async Task DeleteAsync(Guid id)
     {
         await using var connection = new NpgsqlConnection(connectionString);
 
-        await connection.ExecuteAsync(
-            "DELETE FROM \"UserCredentials\" " +
-            "WHERE \"Id\" = @Id",
-            new { Id = id });
-    }
+        const string Sql = """
+            DELETE FROM "UserCredentials"
+            WHERE "Id" = @Id;
+            """;
 
-    public async Task UpdateRefreshTokenAsync(Guid id, string refreshToken)
-    {
-        using var connection = new NpgsqlConnection(connectionString);
-        await connection.ExecuteAsync(
-            "UPDATE \"UserCredentials\" " +
-            "SET \"RefreshToken\" = @RefreshToken " +
-            "WHERE \"Id\" = @Id",
-            new { Id = id, RefreshToken = refreshToken });
+        await connection.ExecuteAsync(Sql, new { Id = id });
     }
 }

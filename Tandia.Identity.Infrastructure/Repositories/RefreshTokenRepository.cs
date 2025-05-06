@@ -7,48 +7,65 @@ namespace Tandia.Identity.Infrastructure.Repositories;
 
 public sealed class RefreshTokenRepository(IOptions<DatabaseOptions> databaseOptions) : IRefreshTokenRepository
 {
-    private readonly string connectionString = databaseOptions.Value.DefaultConnection;
+    private readonly string connectionString = databaseOptions.Value.ConnectionString;
 
     public async Task AddAsync(RefreshTokenEntity refreshToken)
     {
-            await using var connection = new NpgsqlConnection(connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
-            await connection.ExecuteAsync(
-                "INSERT INTO \"RefreshTokens\" (\"Id\", \"UserId\", \"Token\", \"ExpiryDate\", \"IsValid\") VALUES (@Id, @UserId, @Token, @ExpiryDate, @IsValid)",
-                new { refreshToken.Id, refreshToken.UserId, refreshToken.Token, refreshToken.ExpiryDate, refreshToken.IsValid });
+        const string Sql = """
+        INSERT INTO "RefreshTokens"
+               ("Id", "UserId", "Token", "ExpiryDate")
+        VALUES  (@Id, @UserId, @Token, @ExpiryDate);
+        """;
+
+        await connection.ExecuteAsync(Sql, new
+        {
+            refreshToken.Id,
+            refreshToken.UserId,
+            refreshToken.Token,
+            refreshToken.ExpiryDate,
+        });
     }
 
     public async Task<RefreshTokenEntity?> GetTokenAsync(string refreshToken)
     {
-            await using var connection = new NpgsqlConnection(connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
-            var result = await connection.QueryFirstOrDefaultAsync(
-                "SELECT \"Id\", \"UserId\", \"Token\", \"ExpiryDate\", \"IsValid\" " +
-                "FROM \"RefreshTokens\" " +
-                "WHERE \"Token\" = @Token " +
-                "ORDER BY \"ExpiryDate\" DESC " +
-                "LIMIT 1",
-                new { Token = refreshToken });
+        const string Sql = """
+        SELECT  "Id",
+                "UserId",
+                "Token",
+                "ExpiryDate"
+        FROM    "RefreshTokens"
+        WHERE   "Token" = @Token
+        ORDER BY "ExpiryDate" DESC
+        LIMIT 1;
+        """;
 
-            if (result == null)
-            {
-                return null;
-            }
+        var result = await connection.QueryFirstOrDefaultAsync(Sql, new { Token = refreshToken });
 
-            return new RefreshTokenEntity(
-                result.Id,
-                result.UserId,
-                result.Token,
-                result.ExpiryDate,
-                result.IsValid);
+        if (result == null)
+        {
+            return null;
+        }
+
+        return new RefreshTokenEntity(
+            result.Id,
+            result.UserId,
+            result.Token,
+            result.ExpiryDate);
     }
 
-    public async Task InvalidateTokenAsync(string refreshToken)
+    public async Task DeleteAsync(string refreshToken)
     {
-            await using var connection = new NpgsqlConnection(connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
 
-            await connection.ExecuteAsync(
-                "UPDATE \"RefreshTokens\" SET \"IsValid\" = FALSE WHERE \"Token\" = @Token",
-                new { Token = refreshToken });
+        const string Sql = """
+        DELETE FROM "RefreshTokens"
+        WHERE  "Token" = @Token;
+        """;
+
+        await connection.ExecuteAsync(Sql, new { Token = refreshToken });
     }
 }

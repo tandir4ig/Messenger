@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Tandia.Identity.WebApi.Extensions;
-using Tandia.Identity.WebApi.Middleware;
 using Tandia.Identity.WebApi.OptionsSetup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +24,6 @@ builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

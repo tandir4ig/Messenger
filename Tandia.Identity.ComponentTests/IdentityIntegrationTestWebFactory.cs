@@ -21,7 +21,7 @@ public sealed class IdentityIntegrationTestWebFactory : WebApplicationFactory<We
     {
         builder.ConfigureServices(services =>
         {
-            services.Configure<DatabaseOptions>(opt => opt.DefaultConnection = ConnectionString);
+            services.Configure<DatabaseOptions>(opt => opt.ConnectionString = ConnectionString);
         });
     }
 
