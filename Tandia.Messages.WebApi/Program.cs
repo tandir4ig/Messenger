@@ -32,10 +32,7 @@ builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Bearer", new AuthorizationPolicyBuilder()
-        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
-        .RequireAuthenticatedUser().Build());
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
