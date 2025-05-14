@@ -9,4 +9,6 @@ public interface IRefreshTokenRepository
     Task<RefreshTokenEntity?> GetTokenAsync(string refreshToken);
 
     Task DeleteAsync(string refreshToken);
+
+    Task DeleteExpiredTokensAsync(DateTimeOffset utcNow);
 }

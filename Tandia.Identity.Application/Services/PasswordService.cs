@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
-using Tandia.Identity.Application.Services.Interfaces;
+using Tandia.Identity.WebApi.Services.Interfaces;
 
-namespace Tandia.Identity.Application.Services;
+namespace Tandia.Identity.WebApi.Services;
 
 public sealed class PasswordService : IPasswordService
 {

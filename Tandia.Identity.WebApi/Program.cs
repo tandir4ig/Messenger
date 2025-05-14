@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.Redis.StackExchange;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Tandia.Identity.WebApi.Extensions;
 using Tandia.Identity.WebApi.OptionsSetup;
@@ -21,7 +23,15 @@ builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
 
+builder.Services.AddHangfire(hf => hf
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseRedisStorage(builder.Configuration.GetConnectionString("Redis")));
+
 var app = builder.Build();
+
+app.RegisterBackgroundJobs();
+app.UseHangfireDashboard();
 
 // Configure the HTTP request pipeline.
 

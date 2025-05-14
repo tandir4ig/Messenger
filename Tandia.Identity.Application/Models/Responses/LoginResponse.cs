@@ -1,4 +1,4 @@
-namespace Tandia.Identity.Application.Models.Responses;
+namespace Tandia.Identity.WebApi.Models.Responses;
 
 public sealed class LoginResponse(string accessToken, string refreshToken)
 {

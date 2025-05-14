@@ -1,11 +1,11 @@
 using CSharpFunctionalExtensions;
-using Tandia.Identity.Application.Models;
-using Tandia.Identity.Application.Models.Responses;
-using Tandia.Identity.Application.Services.Interfaces;
 using Tandia.Identity.Infrastructure.Models;
 using Tandia.Identity.Infrastructure.Repositories;
+using Tandia.Identity.WebApi.Models;
+using Tandia.Identity.WebApi.Models.Responses;
+using Tandia.Identity.WebApi.Services.Interfaces;
 
-namespace Tandia.Identity.Application.Services;
+namespace Tandia.Identity.WebApi.Services;
 
 public sealed class IdentityService(
 

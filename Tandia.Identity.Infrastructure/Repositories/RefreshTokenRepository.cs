@@ -68,4 +68,18 @@ public sealed class RefreshTokenRepository(IOptions<DatabaseOptions> databaseOpt
 
         await connection.ExecuteAsync(Sql, new { Token = refreshToken });
     }
+
+    public async Task DeleteExpiredTokensAsync(DateTimeOffset utcNow)
+    {
+        await using var conn = new NpgsqlConnection(connectionString);
+
+        const string Sql = """
+        DELETE FROM "RefreshTokens"
+        WHERE  "ExpiryDate" < @Now;
+        """;
+
+        var nowUtc = utcNow.UtcDateTime;
+
+        await conn.ExecuteAsync(Sql, new { Now = nowUtc });
+    }
 }
