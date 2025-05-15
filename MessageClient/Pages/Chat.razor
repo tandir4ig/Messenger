@@ -1,101 +1,79 @@
 @page "/"
 @using MessageClient.Models
-@inject HttpClient Http
-@using System;
+@using MudBlazor
+@inject IHttpClientFactory ClientFactory
 
 <div class="main-message-body">
     <div class="all-message-form">
-        @if(messages != null)
+        @if (messages is not null)
         {
-            @foreach (var message in messages)
+            @foreach (var m in messages)
             {
-                <div>
-                    <div class="message-form">
-                        <div class="message-form-header">
-                            <div>
-                                @message.Id
-                            </div>
-                            <div>
-                                @GetTime(message)
-                            </div>
-                        </div>
-                        <div class="message-form-header">
-                            <div>
-                                @message.Content
-                            </div>
-                            <div>
-                                @IsUpdated(message)
-                                <MudIcon Icon="@Icons.Material.Filled.BorderColor"
-                                Color="Color.Primary"
-                                Size="Size.Medium"
-                                @onclick="@(() => SetValueToId(message.Id))"
-                                style="cursor: pointer;" />
-                            </div>
+                <div class="message-form">
+                    <div class="message-form-header">
+                        <div>@m.Id</div>
+                        <div>@GetTime(m)</div>
+                    </div>
+                    <div class="message-form-header">
+                        <div>@m.Content</div>
+                        <div>
+                            @IsUpdated(m)
+                            <MudIcon Icon="@Icons.Material.Filled.BorderColor"
+                                     Color="Color.Primary"
+                                     Size="Size.Medium"
+                                     @onclick="() => SetValueToId(m.Id)"
+                                     style="cursor:pointer;" />
                         </div>
                     </div>
                 </div>
             }
-        } 
+        }
     </div>
+
     <div class="bottom-container">
-        <MudTextField @bind-Value="newMessage" Label="Enter your message" Variant="Variant.Filled" />
+        <MudTextField @bind-Value="newMessage"
+                      Label="Enter your message"
+                      Variant="Variant.Filled" />
         <MudButton OnClick="SendMessage" Color="Color.Primary">Send</MudButton>
     </div>
 </div>
 
 @code {
-
+    private HttpClient Http = default!;          // клиент «MessagesApi»
     private string? newMessage;
     private List<Message>? messages = new();
     private Guid guid;
 
     protected override async Task OnInitializedAsync()
     {
-        guid = Guid.NewGuid();
+        Http  = ClientFactory.CreateClient("MessagesApi");
+
+        guid     = Guid.NewGuid();
         messages = await Http.GetFromJsonAsync<List<Message>>("api/messages");
     }
 
-    private void SetValueToId(Guid id){
-        guid = id;
-    }
+    private void SetValueToId(Guid id) => guid = id;
 
     private async Task SendMessage()
     {
-        if (!string.IsNullOrWhiteSpace(newMessage))
+        if (string.IsNullOrWhiteSpace(newMessage))
+            return;
+
+        var body = new MessageRequest { Content = newMessage };
+        var resp = await Http.PutAsJsonAsync($"api/messages/{guid}", body);
+
+        guid = Guid.NewGuid();
+
+        if (resp.IsSuccessStatusCode)
         {
-
-            var messageRequest = new MessageRequest { Content = newMessage };
-            var response = await Http.PutAsJsonAsync($"api/messages/{guid}", messageRequest);
-
-            guid = Guid.NewGuid();
-
-            if (response.IsSuccessStatusCode)
-            {
-                newMessage = string.Empty;
-                messages = await Http.GetFromJsonAsync<List<Message>>("api/Messages");
-            }
+            newMessage = string.Empty;
+            messages   = await Http.GetFromJsonAsync<List<Message>>("api/messages");
         }
     }
 
-    private static string GetTime(Message message)
-    {
-        if (message.LastModified is null)
-        {
-            return message.Timestamp.ToLocalTime().ToString("F");
-        }
+    private static string GetTime(Message m) =>
+        (m.LastModified ?? m.Timestamp).ToLocalTime().ToString("F");
 
-        var localtime = (DateTimeOffset)(object)message.LastModified;
-
-        return localtime.ToLocalTime().ToString("F");
-    }
-
-    private static string? IsUpdated(Message message)
-    {
-        if (message.LastModified != null)
-        {
-            return "message updated";
-        }
-
-        return null;
-    }
+    private static string? IsUpdated(Message m) =>
+        m.LastModified is null ? null : "message updated";
 }

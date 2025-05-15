@@ -1,7 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
 using Tandia.Messages.WebApi.Extensions;
+using Tandia.Messages.WebApi.OptionsSetup;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS (Blazor WASM на https://localhost:7218)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -19,9 +24,40 @@ builder.Services.AddMessageServices(
     builder.Configuration.GetConnectionString(
         "DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
 
-builder.Services.AddControllers();
+// JWT
+builder.Services.AddOptions();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Введите: **Bearer {токен}**",
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+            },
+            Array.Empty<string>()
+        },
+    });
+});
 
 var app = builder.Build();
 
@@ -36,6 +72,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowBlazorClient");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
