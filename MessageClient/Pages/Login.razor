@@ -34,7 +34,7 @@
 
     private async Task SignIn()
     {
-        var dto = new LoginRequest(user, pass);   // собираем record здесь
+        var dto = new LoginRequest(user, pass);
 
         if (await Auth.LoginAsync(dto))
             Nav.NavigateTo("/");

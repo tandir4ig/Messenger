@@ -116,17 +116,16 @@ code {
 }
 
 .main-message-body {
-
     margin: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 66%
+    width: 50%;
+    position: relative;
 }
 
 .all-message-form {
-    /*background-color: lightgray;*/ /* Цвет фона для визуального отделения */
-    width: 80%;
+    width: 100%;
     overflow-y: scroll;
     height: calc(100vh - 150px);
     overflow-x: hidden;
@@ -134,4 +133,10 @@ code {
     flex-direction: column;
     gap: 8px;
     padding: 8px;
+}
+
+.logout-button-container {
+    display: flex;
+    justify-content: end;
+    width: 100%;
 }

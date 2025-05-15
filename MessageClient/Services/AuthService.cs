@@ -1,10 +1,11 @@
 using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using MessageClient.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace MessageClient.Services;
 
-public sealed class AuthService(IHttpClientFactory factory, ILocalStorageService localStorage)
+public sealed class AuthService(IHttpClientFactory factory, ILocalStorageService localStorage, NavigationManager nav)
 {
     private readonly HttpClient httpClient = factory.CreateClient("IdentityApi");
 
@@ -26,6 +27,7 @@ public sealed class AuthService(IHttpClientFactory factory, ILocalStorageService
     {
         await localStorage.RemoveItemAsync("access_token");
         await localStorage.RemoveItemAsync("refresh_token");
+        nav.NavigateTo("/login", forceLoad: true);
     }
 
     public async Task<string?> GetAccessTokenAsync() =>

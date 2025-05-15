@@ -25,10 +25,11 @@ public sealed class AuthorizedHandler : DelegatingHandler
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(
-        HttpRequestMessage request, CancellationToken cancellationToken)
+        HttpRequestMessage request,
+        CancellationToken cancellationToken)
     {
-        /* --- добавляем Bearer --- */
         var access = await _storage.GetItemAsync<string>("access_token", cancellationToken);
+
         if (!string.IsNullOrWhiteSpace(access))
         {
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
@@ -36,26 +37,24 @@ public sealed class AuthorizedHandler : DelegatingHandler
 
         var response = await base.SendAsync(request, cancellationToken);
 
-        /* --- 401: пробуем refresh --- */
         if (response.StatusCode == HttpStatusCode.Unauthorized &&
             !request.RequestUri!.AbsolutePath.Contains("/auth/", StringComparison.OrdinalIgnoreCase))
         {
             await _refreshLock.WaitAsync(cancellationToken);
             try
             {
-                /* ► может, токен уже обновлён другим потоком */
                 access = await _storage.GetItemAsync<string>("access_token", cancellationToken);
+
                 if (!string.IsNullOrWhiteSpace(access))
                 {
                     response.Dispose();
                     return await RepeatOriginalAsync(request, access, cancellationToken);
                 }
 
-                /* ► берём refresh-token */
                 var refresh = await _storage.GetItemAsync<string>("refresh_token", cancellationToken);
                 if (string.IsNullOrWhiteSpace(refresh))
                 {
-                    await ForceLogoutAsync(cancellationToken);              // ← редирект
+                    await ForceLogoutAsync(cancellationToken);
                     return response;
                 }
 
@@ -66,11 +65,10 @@ public sealed class AuthorizedHandler : DelegatingHandler
 
                 if (!refreshResp.IsSuccessStatusCode)
                 {
-                    await ForceLogoutAsync(cancellationToken);              // ← редирект
+                    await ForceLogoutAsync(cancellationToken);
                     return response;
                 }
 
-                /* ► успех: сохраняем пару и повторяем запрос */
                 var pair = await refreshResp.Content.ReadFromJsonAsync<TokenPair>(cancellationToken);
                 await SaveTokensAsync(pair!);
 

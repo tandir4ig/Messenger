@@ -20,8 +20,9 @@ builder.Services.AddScoped<AuthorizedHandler>();
 
 builder.Services.AddHttpClient("IdentityApi", c => c.BaseAddress = identityBase);
 
-builder.Services.AddHttpClient("MessagesApi", c => c.BaseAddress = messagesBase)
-.AddHttpMessageHandler<AuthorizedHandler>();
+var messageClient = builder.Services.AddHttpClient("MessagesApi", client => client.BaseAddress = messagesBase);
+messageClient.AddStandardResilienceHandler();
+messageClient.AddHttpMessageHandler<AuthorizedHandler>();
 
 builder.Services.AddScoped(
     sp => sp.GetRequiredService<IHttpClientFactory>()

@@ -1,9 +1,24 @@
 @page "/"
+@using Blazored.LocalStorage
 @using MessageClient.Models
+@using MessageClient.Services
 @using MudBlazor
 @inject IHttpClientFactory ClientFactory
+@inject ILocalStorageService localStorage
+@inject NavigationManager Navigation
+@inject AuthService Auth
 
 <div class="main-message-body">
+    <div class="logout-button-container">
+        <MudButton OnClick="Logout"
+        Color="Color.Error"
+        Variant="Variant.Outlined"
+        StartIcon="@Icons.Material.Filled.ExitToApp">
+            Logout
+        </MudButton>
+    </div>
+
+
     <div class="all-message-form">
         @if (messages is not null)
         {
@@ -19,10 +34,10 @@
                         <div>
                             @IsUpdated(m)
                             <MudIcon Icon="@Icons.Material.Filled.BorderColor"
-                                     Color="Color.Primary"
-                                     Size="Size.Medium"
-                                     @onclick="() => SetValueToId(m.Id)"
-                                     style="cursor:pointer;" />
+                            Color="Color.Primary"
+                            Size="Size.Medium"
+                            @onclick="() => SetValueToId(m.Id)"
+                            style="cursor:pointer;" />
                         </div>
                     </div>
                 </div>
@@ -32,13 +47,14 @@
 
     <div class="bottom-container">
         <MudTextField @bind-Value="newMessage"
-                      Label="Enter your message"
-                      Variant="Variant.Filled" />
+        Label="Enter your message"
+        Variant="Variant.Filled" />
         <MudButton OnClick="SendMessage" Color="Color.Primary">Send</MudButton>
     </div>
 </div>
 
 @code {
+
     private HttpClient Http = default!;          // клиент «MessagesApi»
     private string? newMessage;
     private List<Message>? messages = new();
@@ -76,4 +92,10 @@
 
     private static string? IsUpdated(Message m) =>
         m.LastModified is null ? null : "message updated";
+
+    private async Task Logout()
+    {
+        await Auth.LogoutAsync();
+        Navigation.NavigateTo("/login");
+    }
 }
