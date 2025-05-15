@@ -5,6 +5,17 @@ using Tandia.Identity.WebApi.OptionsSetup;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowBlazorClient",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:7218") // Укажите URL вашего Blazor WebAssembly приложения
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddIdentityServices();
 
@@ -35,10 +46,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowBlazorClient");
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

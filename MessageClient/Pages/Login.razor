@@ -1,0 +1,44 @@
+@page "/login"
+@using MudBlazor
+@using MessageClient.Services
+@using MessageClient.Models
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<MudPaper Style="max-width:320px;margin:auto;padding:2rem;">
+    <MudText Typo="Typo.h6" Class="mb-3">Вход</MudText>
+
+    <MudTextField T="string" Label="Логин"
+                  @bind-Value="user" Immediate="true" />
+
+    <MudTextField T="string" Label="Пароль"
+                  @bind-Value="pass"
+                  InputType="InputType.Password"
+                  Immediate="true"
+                  Class="mt-2" />
+
+    <MudButton OnClick="SignIn" Color="Color.Primary" Class="mt-4">
+        Войти
+    </MudButton>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <MudAlert Severity="Severity.Error" Dense="true" Class="mt-2">@error</MudAlert>
+    }
+</MudPaper>
+
+@code {
+    private string user = string.Empty;
+    private string pass = string.Empty;
+    private string? error;
+
+    private async Task SignIn()
+    {
+        var dto = new LoginRequest(user, pass);   // собираем record здесь
+
+        if (await Auth.LoginAsync(dto))
+            Nav.NavigateTo("/");
+        else
+            error = "Неверный логин или пароль";
+    }
+}
