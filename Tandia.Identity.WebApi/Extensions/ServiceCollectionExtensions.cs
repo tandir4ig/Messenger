@@ -1,4 +1,3 @@
-using Tandia.Identity.Application.Extensions;
 using Tandia.Identity.Infrastructure.Services;
 
 namespace Tandia.Identity.WebApi.Extensions;

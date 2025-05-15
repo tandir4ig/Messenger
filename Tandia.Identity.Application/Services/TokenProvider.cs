@@ -3,10 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Tandia.Identity.Application.Models;
-using Tandia.Identity.Application.Services.Interfaces;
+using Tandia.Identity.WebApi.Models;
+using Tandia.Identity.WebApi.Services.Interfaces;
 
-namespace Tandia.Identity.Application.Services;
+namespace Tandia.Identity.WebApi.Services;
 
 public sealed class TokenProvider(
     IOptions<JwtSettings> jwtSettings,

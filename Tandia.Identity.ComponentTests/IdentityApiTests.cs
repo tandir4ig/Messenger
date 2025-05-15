@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Tandia.Identity.Application.Models.Responses;
 using Tandia.Identity.WebApi.DTOs.Requests;
+using Tandia.Identity.WebApi.Models.Responses;
 
 namespace Tandia.Identity.ComponentTests;
 

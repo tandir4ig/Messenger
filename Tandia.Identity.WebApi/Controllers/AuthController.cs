@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tandia.Identity.Application.Services.Interfaces;
 using Tandia.Identity.WebApi.DTOs.Requests;
+using Tandia.Identity.WebApi.Services.Interfaces;
 
 namespace Tandia.Identity.WebApi.Controllers;
 

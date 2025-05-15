@@ -1,4 +1,4 @@
-namespace Tandia.Identity.Application.Models;
+namespace Tandia.Identity.WebApi.Models;
 
 internal sealed class User
 {

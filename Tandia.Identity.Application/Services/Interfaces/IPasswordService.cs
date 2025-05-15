@@ -1,4 +1,4 @@
-namespace Tandia.Identity.Application.Services.Interfaces;
+namespace Tandia.Identity.WebApi.Services.Interfaces;
 
 public interface IPasswordService
 {

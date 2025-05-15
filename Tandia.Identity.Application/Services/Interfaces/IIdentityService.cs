@@ -1,7 +1,7 @@
 using CSharpFunctionalExtensions;
-using Tandia.Identity.Application.Models.Responses;
+using Tandia.Identity.WebApi.Models.Responses;
 
-namespace Tandia.Identity.Application.Services.Interfaces;
+namespace Tandia.Identity.WebApi.Services.Interfaces;
 
 public interface IIdentityService
 {

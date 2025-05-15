@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Tandia.Identity.Application.Models;
+using Tandia.Identity.WebApi.Models;
 
 namespace Tandia.Identity.WebApi.OptionsSetup;
 

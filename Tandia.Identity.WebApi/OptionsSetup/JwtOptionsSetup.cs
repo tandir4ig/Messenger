@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Options;
-using Tandia.Identity.Application.Models;
+using Tandia.Identity.WebApi.Models;
 
 namespace Tandia.Identity.WebApi.OptionsSetup;
 
