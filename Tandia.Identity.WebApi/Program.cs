@@ -1,12 +1,12 @@
 using Hangfire;
 using Hangfire.Redis.StackExchange;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Tandia.Identity.WebApi.Extensions;
 using Tandia.Identity.WebApi.OptionsSetup;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Logging.AddConsole();
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -27,15 +27,18 @@ builder.Services.AddSwaggerGen();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// JWT
 builder.Services.AddOptions();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
 
+// Hangfire background services
 builder.Services.AddHangfire(hf => hf
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
     .UseRedisStorage(builder.Configuration.GetConnectionString("Redis")));
+builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 

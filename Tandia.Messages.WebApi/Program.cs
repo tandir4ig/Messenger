@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Tandia.Messages.WebApi.Extensions;
 using Tandia.Messages.WebApi.OptionsSetup;
