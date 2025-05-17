@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Tandia.Identity.Application.Jobs;
 using Tandia.Identity.Infrastructure.Repositories;
 using Tandia.Identity.WebApi.Services;
 using Tandia.Identity.WebApi.Services.Interfaces;
@@ -18,7 +17,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<RefreshTokenCleanupJob>();
 
         return services;
     }

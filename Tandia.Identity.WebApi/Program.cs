@@ -6,6 +6,7 @@ using Tandia.Identity.WebApi.OptionsSetup;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddConsole();
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -39,10 +40,10 @@ builder.Services.AddHangfire(hf => hf
     .UseRecommendedSerializerSettings()
     .UseRedisStorage(builder.Configuration.GetConnectionString("Redis")));
 builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
-app.RegisterBackgroundJobs();
 app.UseHangfireDashboard();
 
 // Configure the HTTP request pipeline.
