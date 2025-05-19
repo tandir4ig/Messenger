@@ -17,6 +17,7 @@ builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AuthorizedHandler>();
+builder.Services.AddScoped<ITokenStorageService, LocalStorageTokenService>();
 
 builder.Services.AddHttpClient("IdentityApi", c => c.BaseAddress = identityBase);
 

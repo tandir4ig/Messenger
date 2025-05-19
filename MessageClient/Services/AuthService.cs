@@ -1,11 +1,10 @@
 using System.Net.Http.Json;
-using Blazored.LocalStorage;
 using MessageClient.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace MessageClient.Services;
 
-public sealed class AuthService(IHttpClientFactory factory, ILocalStorageService localStorage, NavigationManager nav)
+public sealed class AuthService(IHttpClientFactory factory, ITokenStorageService tokenStorage, NavigationManager navigator)
 {
     private readonly HttpClient httpClient = factory.CreateClient("IdentityApi");
 
@@ -18,24 +17,26 @@ public sealed class AuthService(IHttpClientFactory factory, ILocalStorageService
         }
 
         var tokens = await resp.Content.ReadFromJsonAsync<TokenPair>();
-        await localStorage.SetItemAsync("access_token", tokens!.AccessToken);
-        await localStorage.SetItemAsync("refresh_token", tokens.RefreshToken);
+        if (tokens == null)
+        {
+            return false;
+        }
+
+        await tokenStorage.SaveTokenPairAsync(tokens);
         return true;
     }
 
     public async Task LogoutAsync()
     {
-        await localStorage.RemoveItemAsync("access_token");
-        await localStorage.RemoveItemAsync("refresh_token");
-        nav.NavigateTo("/login", forceLoad: true);
+        await tokenStorage.RemoveTokenPairAsync();
+        navigator.NavigateTo("/login", forceLoad: true);
     }
 
-    public async Task<string?> GetAccessTokenAsync() =>
-        await localStorage.GetItemAsync<string>("access_token");
+    public async Task<string?> GetAccessTokenAsync() => await tokenStorage.GetAccessTokenAsync();
 
     public async Task<bool> TryRefreshAsync()
     {
-        var refresh = await localStorage.GetItemAsync<string>("refresh_token");
+        var refresh = await tokenStorage.GetRefreshTokenAsync();
         if (string.IsNullOrWhiteSpace(refresh))
         {
             return false;
@@ -48,8 +49,12 @@ public sealed class AuthService(IHttpClientFactory factory, ILocalStorageService
         }
 
         var tokens = await resp.Content.ReadFromJsonAsync<TokenPair>();
-        await localStorage.SetItemAsync("access_token", tokens!.AccessToken);
-        await localStorage.SetItemAsync("refresh_token", tokens.RefreshToken);
+        if (tokens is null)
+        {
+            return false;
+        }
+
+        await tokenStorage.SaveTokenPairAsync(tokens);
         return true;
     }
 }
