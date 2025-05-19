@@ -10,8 +10,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var identityBase = new Uri("https://localhost:7166/");
-var messagesBase = new Uri("https://localhost:7238/");
+var identityBase = new Uri(builder.Configuration
+    .GetConnectionString("IdentityApi") ?? throw new InvalidOperationException("Connection string 'IdentityApi' not found."));
+var messagesBase = new Uri(builder.Configuration
+    .GetConnectionString("MessagesApi") ?? throw new InvalidOperationException("Connection string 'MessagesApi' not found."));
 
 builder.Services.AddMudServices();
 builder.Services.AddBlazoredLocalStorage();
