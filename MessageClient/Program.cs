@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using MessageClient;
+using MessageClient.HttpClients;
 using MessageClient.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -19,14 +20,11 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AuthorizedHandler>();
 builder.Services.AddScoped<ITokenStorageService, LocalStorageTokenService>();
 
-builder.Services.AddHttpClient("IdentityApi", c => c.BaseAddress = identityBase);
+builder.Services
+    .AddHttpClient<IdentityApiClient>(c => c.BaseAddress = identityBase);
 
-var messageClient = builder.Services.AddHttpClient("MessagesApi", client => client.BaseAddress = messagesBase);
+var messageClient = builder.Services.AddHttpClient<MessagesApiClient>(c => c.BaseAddress = messagesBase);
 messageClient.AddStandardResilienceHandler();
 messageClient.AddHttpMessageHandler<AuthorizedHandler>();
-
-builder.Services.AddScoped(
-    sp => sp.GetRequiredService<IHttpClientFactory>()
-            .CreateClient("MessagesApi"));
 
 await builder.Build().RunAsync();

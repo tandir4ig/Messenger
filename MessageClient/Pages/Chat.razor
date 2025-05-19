@@ -1,9 +1,9 @@
 @page "/"
 @using Blazored.LocalStorage
+@using MessageClient.HttpClients
 @using MessageClient.Models
 @using MessageClient.Services
-@using MudBlazor
-@inject IHttpClientFactory ClientFactory
+@inject MessagesApiClient MsgApi
 @inject ILocalStorageService localStorage
 @inject NavigationManager Navigation
 @inject AuthService Auth
@@ -62,8 +62,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Http  = ClientFactory.CreateClient("MessagesApi");
-
+        Http = MsgApi.Client;
         guid     = Guid.NewGuid();
         messages = await Http.GetFromJsonAsync<List<Message>>("api/messages");
     }

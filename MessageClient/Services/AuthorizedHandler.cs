@@ -3,32 +3,25 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using MessageClient.Extensions;
+using MessageClient.HttpClients;
 using MessageClient.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace MessageClient.Services;
 
-public sealed class AuthorizedHandler : DelegatingHandler
+public sealed class AuthorizedHandler(
+    ILocalStorageService storage,
+    IdentityApiClient identityClient,
+    NavigationManager nav)
+    : DelegatingHandler
 {
-    private readonly ILocalStorageService _storage;
-    private readonly IHttpClientFactory _factory;
-    private readonly NavigationManager _nav;
-    private static readonly SemaphoreSlim _refreshLock = new(1, 1);
-
-    public AuthorizedHandler(ILocalStorageService storage,
-                             IHttpClientFactory factory,
-                             NavigationManager nav)
-    {
-        _storage = storage;
-        _factory = factory;
-        _nav = nav;
-    }
+    private readonly SemaphoreSlim _refreshLock = new(1, 1);
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        var access = await _storage.GetItemAsync<string>("access_token", cancellationToken);
+        var access = await storage.GetItemAsync<string>("access_token", cancellationToken);
 
         if (!string.IsNullOrWhiteSpace(access))
         {
@@ -37,13 +30,12 @@ public sealed class AuthorizedHandler : DelegatingHandler
 
         var response = await base.SendAsync(request, cancellationToken);
 
-        if (response.StatusCode == HttpStatusCode.Unauthorized &&
-            !request.RequestUri!.AbsolutePath.Contains("/auth/", StringComparison.OrdinalIgnoreCase))
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
             await _refreshLock.WaitAsync(cancellationToken);
             try
             {
-                access = await _storage.GetItemAsync<string>("access_token", cancellationToken);
+                access = await storage.GetItemAsync<string>("access_token", cancellationToken);
 
                 if (!string.IsNullOrWhiteSpace(access))
                 {
@@ -51,7 +43,7 @@ public sealed class AuthorizedHandler : DelegatingHandler
                     return await RepeatOriginalAsync(request, access, cancellationToken);
                 }
 
-                var refresh = await _storage.GetItemAsync<string>("refresh_token", cancellationToken);
+                var refresh = await storage.GetItemAsync<string>("refresh_token", cancellationToken);
                 if (string.IsNullOrWhiteSpace(refresh))
                 {
                     await ForceLogoutAsync(cancellationToken);
@@ -59,9 +51,10 @@ public sealed class AuthorizedHandler : DelegatingHandler
                 }
 
                 /* ► POST /auth/refresh */
-                var client = _factory.CreateClient("IdentityApi"); // клиент без Bearer
-                var refreshResp = await client.PostAsJsonAsync("auth/refresh",
-                                            new { refreshToken = refresh }, cancellationToken);
+                var refreshResp = await identityClient.Client.PostAsJsonAsync(
+                    "auth/refresh",
+                    new { refreshToken = refresh },
+                    cancellationToken);
 
                 if (!refreshResp.IsSuccessStatusCode)
                 {
@@ -94,14 +87,14 @@ public sealed class AuthorizedHandler : DelegatingHandler
 
     private async Task SaveTokensAsync(TokenPair pair)
     {
-        await _storage.SetItemAsync("access_token", pair.AccessToken);
-        await _storage.SetItemAsync("refresh_token", pair.RefreshToken);
+        await storage.SetItemAsync("access_token", pair.AccessToken);
+        await storage.SetItemAsync("refresh_token", pair.RefreshToken);
     }
 
     private async Task ForceLogoutAsync(CancellationToken ct)
     {
-        await _storage.RemoveItemAsync("access_token", ct);
-        await _storage.RemoveItemAsync("refresh_token", ct);
-        _nav.NavigateTo("/login", forceLoad: true);    // ← переходим на страницу входа
+        await storage.RemoveItemAsync("access_token", ct);
+        await storage.RemoveItemAsync("refresh_token", ct);
+        nav.NavigateTo("/login", forceLoad: true);    // ← переходим на страницу входа
     }
 }
