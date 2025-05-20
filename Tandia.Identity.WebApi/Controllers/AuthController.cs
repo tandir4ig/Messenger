@@ -1,5 +1,8 @@
+using MassTransit;
+using MassTransit.Testing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tandia.Identity.WebApi.Contracts.Events;
 using Tandia.Identity.WebApi.DTOs.Requests;
 using Tandia.Identity.WebApi.Services.Interfaces;
 
@@ -7,7 +10,10 @@ namespace Tandia.Identity.WebApi.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public sealed class AuthController(IIdentityService identityService) : ControllerBase
+public sealed class AuthController(
+    IIdentityService identityService,
+    IPublishEndpoint publishEndpoint)
+    : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
@@ -31,6 +37,8 @@ public sealed class AuthController(IIdentityService identityService) : Controlle
         {
             return Problem(detail: result.Error, statusCode: StatusCodes.Status401Unauthorized);
         }
+
+        await publishEndpoint.Publish(new UserLoggedIn(request.Email), cancellationToken: default);
 
         return Ok(result.Value);
     }

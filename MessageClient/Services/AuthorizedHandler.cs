@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Blazored.LocalStorage;
 using MessageClient.Extensions;
 using MessageClient.HttpClients;
 using MessageClient.Models;
@@ -10,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 namespace MessageClient.Services;
 
 public sealed class AuthorizedHandler(
-    ILocalStorageService storage,
+    ITokenStorageService storage,
     IdentityApiClient identityClient,
     NavigationManager nav)
     : DelegatingHandler
@@ -21,7 +20,7 @@ public sealed class AuthorizedHandler(
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        var access = await storage.GetItemAsync<string>("access_token", cancellationToken);
+        var access = await storage.GetAccessTokenAsync(cancellationToken);
 
         if (!string.IsNullOrWhiteSpace(access))
         {
@@ -35,7 +34,7 @@ public sealed class AuthorizedHandler(
             await _refreshLock.WaitAsync(cancellationToken);
             try
             {
-                access = await storage.GetItemAsync<string>("access_token", cancellationToken);
+                access = await storage.GetAccessTokenAsync(cancellationToken);
 
                 if (!string.IsNullOrWhiteSpace(access))
                 {
@@ -43,7 +42,7 @@ public sealed class AuthorizedHandler(
                     return await RepeatOriginalAsync(request, access, cancellationToken);
                 }
 
-                var refresh = await storage.GetItemAsync<string>("refresh_token", cancellationToken);
+                var refresh = await storage.GetRefreshTokenAsync(cancellationToken);
                 if (string.IsNullOrWhiteSpace(refresh))
                 {
                     await ForceLogoutAsync(cancellationToken);
@@ -63,7 +62,7 @@ public sealed class AuthorizedHandler(
                 }
 
                 var pair = await refreshResp.Content.ReadFromJsonAsync<TokenPair>(cancellationToken);
-                await SaveTokensAsync(pair!);
+                await storage.SaveTokenPairAsync(pair!, cancellationToken);
 
                 response.Dispose();
                 return await RepeatOriginalAsync(request, pair!.AccessToken, cancellationToken);
@@ -85,16 +84,9 @@ public sealed class AuthorizedHandler(
         return base.SendAsync(clone, ct);
     }
 
-    private async Task SaveTokensAsync(TokenPair pair)
+    private async Task ForceLogoutAsync(CancellationToken cancellationToken)
     {
-        await storage.SetItemAsync("access_token", pair.AccessToken);
-        await storage.SetItemAsync("refresh_token", pair.RefreshToken);
-    }
-
-    private async Task ForceLogoutAsync(CancellationToken ct)
-    {
-        await storage.RemoveItemAsync("access_token", ct);
-        await storage.RemoveItemAsync("refresh_token", ct);
+        await storage.RemoveTokenPairAsync(cancellationToken);
         nav.NavigateTo("/login", forceLoad: true);    // ← переходим на страницу входа
     }
 }

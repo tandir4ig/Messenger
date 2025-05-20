@@ -1,5 +1,6 @@
 using Hangfire;
 using Hangfire.Redis.StackExchange;
+using MassTransit;
 using Tandia.Identity.WebApi.Extensions;
 using Tandia.Identity.WebApi.OptionsSetup;
 
@@ -41,6 +42,21 @@ builder.Services.AddHangfire(hf => hf
     .UseRedisStorage(builder.Configuration.GetConnectionString("Redis")));
 builder.Services.AddHangfireServer();
 builder.Services.AddHangfireServer();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+    // В этом сервисе у нас только публикация, потребителей не регистрируем.
+});
 
 var app = builder.Build();
 
