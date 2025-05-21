@@ -1,6 +1,9 @@
 using Hangfire;
 using Hangfire.Redis.StackExchange;
 using MassTransit;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Tandia.Identity.WebApi.Extensions;
 using Tandia.Identity.WebApi.OptionsSetup;
 
@@ -57,6 +60,17 @@ builder.Services.AddMassTransit(x =>
     });
     // В этом сервисе у нас только публикация, потребителей не регистрируем.
 });
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(rb => rb.AddService("IdentityService", serviceVersion: "1.0.0"))
+    .WithTracing(tp =>
+    {
+        tp.AddAspNetCoreInstrumentation();
+        tp.AddHttpClientInstrumentation();
+        tp.AddSqlClientInstrumentation(opts => opts.SetDbStatementForText = true);
+        tp.AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName);
+        tp.AddOtlpExporter(otlp => otlp.Endpoint = new Uri("http://localhost:4317"));
+    });
 
 var app = builder.Build();
 

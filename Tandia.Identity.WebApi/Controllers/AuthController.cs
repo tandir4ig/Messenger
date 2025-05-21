@@ -1,8 +1,7 @@
+using Contracts.Events;
 using MassTransit;
-using MassTransit.Testing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tandia.Identity.WebApi.Contracts.Events;
 using Tandia.Identity.WebApi.DTOs.Requests;
 using Tandia.Identity.WebApi.Services.Interfaces;
 

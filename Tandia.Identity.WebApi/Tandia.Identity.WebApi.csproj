@@ -6,6 +6,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Contracts\Contracts.csproj" />
     <ProjectReference Include="..\Tandia.Identity.Application\Tandia.Identity.Application.csproj" />
   </ItemGroup>
 

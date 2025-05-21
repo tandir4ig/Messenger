@@ -9,6 +9,16 @@
 
     <ItemGroup Condition="$(MSBuildProjectName.EndsWith('WebApi'))">
         <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.12.0-beta.1" />
+        <PackageReference Include="MassTransit" Version="8.4.1" />
+    </ItemGroup>
+    
+    <ItemGroup Condition="$(MSBuildProjectName.EndsWith('Identity.WebApi'))">
+        <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.12.0-beta.1" />
     </ItemGroup>
 
     <ItemGroup Condition="$(MSBuildProjectName.EndsWith('ComponentTests'))">
