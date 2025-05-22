@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tandia.Identity.Application\Tandia.Identity.Application.csproj" />
+    <ProjectReference Include="..\Tandia.Identity.Infrastructure\Tandia.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\Tandia.Identity.WebApi\Tandia.Identity.WebApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
