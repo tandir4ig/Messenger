@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.Redis.StackExchange;
 using MassTransit;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -37,6 +38,7 @@ builder.Services.AddOptions();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
+builder.Services.ConfigureOptions<RabbitMqOptionsSetup>();
 
 // Hangfire background services
 builder.Services.AddHangfire(hf => hf
@@ -44,22 +46,6 @@ builder.Services.AddHangfire(hf => hf
     .UseRecommendedSerializerSettings()
     .UseRedisStorage(builder.Configuration.GetConnectionString("Redis")));
 builder.Services.AddHangfireServer();
-builder.Services.AddHangfireServer();
-
-builder.Services.AddMassTransit(x =>
-{
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host("localhost", "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
-
-        cfg.ConfigureEndpoints(context);
-    });
-    // В этом сервисе у нас только публикация, потребителей не регистрируем.
-});
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(rb => rb.AddService("IdentityService", serviceVersion: "1.0.0"))
@@ -69,7 +55,13 @@ builder.Services.AddOpenTelemetry()
         tp.AddHttpClientInstrumentation();
         tp.AddSqlClientInstrumentation(opts => opts.SetDbStatementForText = true);
         tp.AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName);
-        tp.AddOtlpExporter(otlp => otlp.Endpoint = new Uri("http://localhost:4317"));
+        tp.AddOtlpExporter(opts =>
+        {
+            opts.Endpoint = new Uri(
+                builder.Configuration.GetConnectionString("OtlpEndpoint")
+                ?? throw new InvalidOperationException("Connection string 'OtlpEndpoint' not found."));
+            opts.Protocol = OtlpExportProtocol.Grpc;
+        });
     });
 
 var app = builder.Build();

@@ -1,4 +1,6 @@
 using CSharpFunctionalExtensions;
+using MassTransit;
+using Tandia.Identity.Contracts.Events;
 using Tandia.Identity.Infrastructure.Models;
 using Tandia.Identity.Infrastructure.Repositories;
 using Tandia.Identity.WebApi.Models;
@@ -14,7 +16,8 @@ public sealed class IdentityService(
     IRefreshTokenRepository refreshTokenRepository,
     IPasswordService passwordService,
     ITokenProvider tokenProvider,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IPublishEndpoint publishEndpoint)
     : IIdentityService
 {
     public async Task<Result> RegisterUserAsync(string email, string password)
@@ -77,6 +80,8 @@ public sealed class IdentityService(
             refreshToken.UserId,
             refreshToken.Token,
             refreshToken.ExpiryDate));
+
+        await publishEndpoint.Publish(new UserLoggedIn(email), cancellationToken: default);
 
         return Result.Success(new LoginResponse(accessToken, refreshToken.Token));
     }

@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tandia.Identity.Application\Tandia.Identity.Application.csproj" />
-    <ProjectReference Include="..\Tandia.Identity.Infrastructure\Tandia.Identity.Infrastructure.csproj" />
+    <PackageReference Include="AutoFixture" Version="4.18.1" />
+    <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tandia.Identity.Contracts\Tandia.Identity.Contracts.csproj" />
     <ProjectReference Include="..\Tandia.Identity.WebApi\Tandia.Identity.WebApi.csproj" />
   </ItemGroup>
 

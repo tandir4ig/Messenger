@@ -1,9 +1,9 @@
-using MassTransit;
+using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Tandia.Messages.WebApi.Consumers;
 using Tandia.Messages.WebApi.Extensions;
 using Tandia.Messages.WebApi.OptionsSetup;
 
@@ -31,6 +31,7 @@ builder.Services.AddMessageServices(
 builder.Services.AddOptions();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+builder.Services.ConfigureOptions<RabbitMqOptionsSetup>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
@@ -62,26 +63,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddMassTransit(x =>
-{
-    x.AddConsumer<UserLoggedInConsumer>();
-
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host("localhost", "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
-        // Определяем очередь (endpoint) для получения событий UserLoggedIn
-        cfg.ReceiveEndpoint("user-loggedin-queue", e =>
-        {
-            // Связываем consumer с этой очередью
-            e.ConfigureConsumer<UserLoggedInConsumer>(context);
-        });
-    });
-});
-
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(rb => rb.AddService("MessageService", serviceVersion: "1.0.0"))
     .WithTracing(tp =>
@@ -90,7 +71,13 @@ builder.Services.AddOpenTelemetry()
         tp.AddEntityFrameworkCoreInstrumentation();
         tp.AddHttpClientInstrumentation();
         tp.AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName);
-        tp.AddOtlpExporter(otlp => otlp.Endpoint = new Uri("http://localhost:4317"));
+        tp.AddOtlpExporter(opts =>
+        {
+            opts.Endpoint = new Uri(
+                builder.Configuration.GetConnectionString("OtlpEndpoint")
+                ?? throw new InvalidOperationException("Connection string 'OtlpEndpoint' not found."));
+            opts.Protocol = OtlpExportProtocol.Grpc;
+        });
     });
 
 var app = builder.Build();

@@ -1,8 +1,9 @@
-using Contracts.Events;
 using MassTransit;
+using Microsoft.Extensions.Logging;
+using Tandia.Identity.Contracts.Events;
 using Tandia.Messages.Application.Services.Interfaces;
 
-namespace Tandia.Messages.WebApi.Consumers;
+namespace Tandia.Messages.Application.Consumers;
 
 public sealed class UserLoggedInConsumer(ILogger<UserLoggedInConsumer> logger, IMessageService messageService) : IConsumer<UserLoggedIn>
 {
@@ -10,7 +11,7 @@ public sealed class UserLoggedInConsumer(ILogger<UserLoggedInConsumer> logger, I
     {
         var chatMessage = $"Привет, {context.Message.Email}!";
 
-        await messageService.SendMessageAsync(Guid.NewGuid(), chatMessage);
+        await messageService.SendMessageAsync(context.MessageId ?? Guid.NewGuid(), chatMessage);
 
         logger.LogInformation("Sent welcome message to chat for user {Email}", context.Message.Email);
     }

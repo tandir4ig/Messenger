@@ -6,11 +6,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  <PackageReference Include="MassTransit.RabbitMQ" Version="8.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Contracts\Contracts.csproj" />
+    <ProjectReference Include="..\Tandia.Identity.Contracts\Tandia.Identity.Contracts.csproj" />
     <ProjectReference Include="..\Tandia.Messages\Tandia.Messages.Application.csproj" />
   </ItemGroup>
 

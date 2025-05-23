@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<MigrationService>();
         services.AddHostedService<RecurringJobsHostedService>();
         services.AddUsers();
+        services.AddRabbitMqMessaging();
 
         return services;
     }

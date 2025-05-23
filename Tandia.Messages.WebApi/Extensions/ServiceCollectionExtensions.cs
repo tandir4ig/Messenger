@@ -9,6 +9,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddMessages();
         services.AddInfrastructure(connectionString);
+        services.AddRabbitMqMessages();
 
         return services;
     }
